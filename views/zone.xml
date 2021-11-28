@@ -1,0 +1,19 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="kill4city.zone_list">
+            <field name="name">kill4city Zone list</field>
+            <field name="model">kill4city.zone</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name" />
+                    <field name="lavel" />
+                    <field name="conquest" widget="progressbar" />
+                    <field name="status" />
+                    <field name="food" />
+                    <!-- <button name="repair" type="object" string="Repair" class="oe_highlight" /> -->
+                    <button name="conquer" string="Conquer" class="oe_highlight" />
+                </tree>
+            </field>
+        </record>
+    </data>
+</odoo>

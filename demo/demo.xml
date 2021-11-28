@@ -1,0 +1,40 @@
+<odoo>
+  <data>
+
+    <!-- Weapon_____________________________________________________ -->
+    <record id="kill4city_demo_data_weapons" model="kill4city.weapon">
+      <field name="name">Carlos</field>
+      <field name="damage">6</field>
+    </record>
+    <!-- Player_____________________________________________________ -->
+
+    <record id="kill4city_demo_data_player" model="kill4city.player">
+      <field name="name">Carlos</field>
+      <field name="lavel">6</field>
+      <field name="life">100</field>
+      <field name="weapon">5</field>
+    </record>
+    <!--
+
+          <record id="object1" model="kill4city.kill4city">
+            <field name="name">Object 1</field>
+            <field name="value">10</field>
+          </record>
+
+          <record id="object2" model="kill4city.kill4city">
+            <field name="name">Object 2</field>
+            <field name="value">20</field>
+          </record>
+
+          <record id="object3" model="kill4city.kill4city">
+            <field name="name">Object 3</field>
+            <field name="value">30</field>
+          </record>
+
+          <record id="object4" model="kill4city.kill4city">
+            <field name="name">Object 4</field>
+            <field name="value">40</field>
+          </record>
+-->
+  </data>
+</odoo>

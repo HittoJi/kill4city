@@ -1,0 +1,46 @@
+<odoo>
+  <data>
+    <!-- actions opening views on models -->
+
+    <record model="ir.actions.act_window" id="kill4city.action_city_window">
+      <field name="name">City</field> <!-- name on top  -->
+      <field name="res_model">kill4city.city</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="kill4city.action_zone_window">
+      <field name="name">Zone</field> <!-- name on top  -->
+      <field name="res_model">kill4city.zone</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="kill4city.action_player_window">
+      <field name="name">Player</field> <!-- name on top  -->
+      <field name="res_model">kill4city.player</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="kill4city.action_weapon_window">
+      <field name="name">Player</field> <!-- name on top  -->
+      <field name="res_model">kill4city.weapon</field>
+      <!-- <field name="view_mode">tree,form</field> -->
+      <field name="view_mode">kanban,tree,form</field>
+    </record>
+
+    <!-- server action to the one above -->
+
+    <!-- Top menu item -->
+    <menuitem name="Kill4city" id="kill4city.menu_root" />
+
+    <!-- menu categories -->
+    <menuitem name="Game" id="kill4city.menu_game" parent="kill4city.menu_root" />
+    <menuitem name="Player" id="kill4city.menu_game2" parent="kill4city.menu_root" />
+
+    <!-- actions -->
+    <menuitem name="City" id="kill4city.menu_zone_list" parent="kill4city.menu_game" action="kill4city.action_city_window" />
+    <menuitem name="Zones" id="kill4city.submenu_zones" parent="kill4city.menu_game" action="kill4city.action_zone_window" />
+    <menuitem name="Character" id="kill4city.menu_zone3_list" parent="kill4city.menu_game2" action="kill4city.action_player_window" />
+    <menuitem name="Weapon" id="kill4city.menu_zone4_list" parent="kill4city.menu_game2" action="kill4city.action_weapon_window" />
+    <!-- <menuitem name="List" id="kill4city.menu_zone3_list" parent="kill4city.menu_game" action="kill4city.action_city_window" /> -->
+  </data>
+</odoo>

@@ -1,0 +1,48 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="kill4city.city_list">
+            <field name="name">kill4city City list</field>
+            <field name="model">kill4city.city</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="players_in>2">
+                    <field name="name" />
+                    <field name="zones" />
+                    <field name="max_players" />
+                    <field name="players_in" />
+                    <!-- <field name="max_players" /> -->
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="kill4city.city_form">
+            <field name="name">Negocity Tree</field>
+            <field name="model">kill4city.city</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group string="City data">
+                                <field name="name" />
+                                <field name="zones" />
+                                <field name="max_players" />
+                            </group>
+
+                        </group>
+                        <notebook>
+                            <page string="Players">
+                                <group>
+                                    <field name="players_in" />
+                                </group>
+                            </page>
+                            <page string="Zones">
+                                <group>
+                                    <field name="zone" />
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,19 @@
+<odoo>
+    <data>
+        <!-- explicit list view definition -->
+
+        <!-- Player__________________________________________________________________________________________ -->
+
+        <record model="ir.ui.view" id="kill4city.player_list">
+            <field name="name">kill4city Player list</field>
+            <field name="model">kill4city.player</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name" />
+                    <field name="lavel" />
+                    <field name="life" widget="porcentpie" />
+                </tree>
+            </field>
+        </record>
+    </data>
+</odoo>

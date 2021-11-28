@@ -1,0 +1,47 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="kill4city.weapon_list">
+            <field name="name">Kill4city Player list</field>
+            <field name="model">kill4city.weapon</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="photo" widget="image" class="imgWeaponList"></field>
+                    <field name="name" />
+                    <field name="damage" />
+                    <field name="use_by" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="kill4city.weapon_form">
+            <field name="name">Kill4city Player list</field>
+            <field name="model">kill4city.weapon</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name" />
+                            <field name="damage" />
+                            <field name="photo" widget="image" />
+                            <!-- <field name="use_by" /> -->
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="kill4city.weapon_kanban">
+            <field name="name">Kill4city Player  kanban</field>
+            <field name="model">kill4city.weapon</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="name" />
+                    <field name="damage" />
+                    <templates>
+                        <t t-name="kanban-box"></t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+    </data>
+</odoo>

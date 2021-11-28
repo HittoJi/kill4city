@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_kill4city_zone,kill4city.zone,model_kill4city_zone,base.group_user,1,1,1,1
+access_kill4city_city,kill4city.city,model_kill4city_city,base.group_user,1,1,1,1
+access_kill4city_player,kill4city.player,model_kill4city_player,base.group_user,1,1,1,1
+access_kill4city_weapon,kill4city.weapon,model_kill4city_weapon,base.group_user,1,1,1,1
