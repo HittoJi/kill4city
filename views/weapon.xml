@@ -39,6 +39,7 @@
                     <field name="damage" />
                     <templates>
                         <t t-name="kanban-box"></t>
+                        <h2><field name="name" /></h2>
                     </templates>
                 </kanban>
             </field>

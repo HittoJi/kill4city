@@ -1,0 +1,93 @@
+<odoo>
+    <data>
+        <!-- explicit list view definition -->
+
+        <record model="ir.ui.view" id="kill4city.conquer_list">
+            <field name="name">kill4city Conquer list</field>
+            <field name="model">kill4city.conquer</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <!-- <button name="increment" type="object" string="New name" class="oe_highlight" /> -->
+                    <field name="zone" />
+                    <field name="player" />
+                    <field name="start_time" />
+                    <field name="end_time" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="kill4city.conquer_kanban">
+            <field name="name">Kill4city conquer kanban</field>
+            <field name="model">kill4city.conquer</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="zone" />
+                    <field name="player" />
+                    <field name="start_time" />
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="card-body">
+                                <div class="card-info">
+                                    <p>
+                                        <!-- <img src="https://i.blogs.es/0ca5da/ambulo_polar_wide/450_1000.jpg" alt=""></img> -->
+                                    </p>
+                                    <h3>
+                                        Zone:
+                                        <field name="zone" />
+                                    </h3>
+                                    <h4>
+                                        Player:
+                                        <field name="player" />
+                                    </h4>
+                                    <table class="conquer-table">
+                                        <tr>
+                                            <td>Start time</td>
+                                            <td>
+                                                <field name="start_time" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>End time</td>
+                                            <td>
+                                                <field name="end_time" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Player life</td>
+                                            <td>
+                                                <field name="player_life" widget="progressbar" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Conquers</td>
+                                            <td>
+                                                <field name="percentage_conquers" widget="progressbar" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="kill4city.conquer_form">
+            <field name="name">kill4city Conquer Form</field>
+            <field name="model">kill4city.conquer</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="zone" />
+                            <field name="player" />
+                            <field name="start_time" />
+                            <field name="end_time" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

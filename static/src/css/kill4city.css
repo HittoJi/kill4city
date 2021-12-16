@@ -1,8 +1,64 @@
-.o_progressbar .o_progress{
+.o_progressbar .o_progress {
     /* border: solid black 1px; */
     border: solid black 1px;
 }
-.imgWeaponList{
+
+.imgWeaponList {
     width: 30px;
     height: 30px;
 }
+
+.card-body {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.card-body img {
+    width: 300px;
+    /* height: 300px; */
+}
+
+.card-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.conquer-table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.conquer-table td,
+th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    text-align: center;
+}
+
+.conquer-table tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+.o_kanban_view .oe_kanban_card .o_progressbar .o_progressbar_value,
+.o_kanban_view .o_kanban_record .o_progressbar .o_progressbar_value {
+    width: 1em;
+    margin-right: 2em;
+}
+
+.o_progress {
+    width: 12em;
+}
+
+
+/* tr>th{
+    text-align: center;
+}
+.o_column_sortable .o_list_number_th{
+    text-align: center;
+}
+/* o_column_sortable o_list_number_th
+o_porcentpie_cell o_column_sortable o_list_number_th */

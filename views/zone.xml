@@ -4,15 +4,31 @@
             <field name="name">kill4city Zone list</field>
             <field name="model">kill4city.zone</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree decoration-danger="lavel>70">
                     <field name="name" />
                     <field name="lavel" />
                     <field name="conquest" widget="progressbar" />
                     <field name="status" />
                     <field name="food" />
                     <!-- <button name="repair" type="object" string="Repair" class="oe_highlight" /> -->
-                    <button name="conquer" string="Conquer" class="oe_highlight" />
+                    <button name="zone" string="zone" class="oe_highlight" />
                 </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="kill4city.zone_form">
+            <field name="name">kill4city zone Form</field>
+            <field name="model">kill4city.zone</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name" />
+                            <field name="lavel" />
+                            <field name="food" />
+                            <button name="new_name" type="object" string="New name" class="oe_highlight"/>
+                        </group>
+                    </sheet>
+                </form>
             </field>
         </record>
     </data>

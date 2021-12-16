@@ -2,6 +2,11 @@
 
 from odoo import models, fields, api
 import random
+from datetime import datetime, timedelta
+import logging
+import math
+from openerp.exceptions import ValidationError
+
 
 
 class zone(models.Model):
@@ -31,16 +36,48 @@ class zone(models.Model):
 
     name = fields.Char(default=_generate_town_name)
     conquest = fields.Float()
+    # conquest = fields.Float(compute='_calculate_conquer_porcenta_zone')
     status = fields.Char(default="Invaded")
+    # status = fields.Boolean()
+    
+    # @api.depends('status')
+    # def _calculate_conquer_porcenta_zone(self):
+    #     for zone in self:
+    #         if zone.status:
+    #             zone.conquest = 70
+                
+    def new_name(self):
+        towns = ["Oscoz","Torrelara","Coscullano","Cicera","Haedillo","Eustaquios","Navarredondilla","Elda","Garayolza","Marne","Santiorjo","Delfiá","Malá","Noia","Puertas","Sardas","Felechosas","Bujursot","Betolaza","Batiao","Berzosa","Rigueira","Guaso","Bode","Logrosa","Vilamitjana","Cogela","Royo","Solmayor","Daneiro","Fornes","Medal","Infesta","Ludrio","Torregorda","Cereijido","Sanjurjo","Corres","Espasantes","Igea","Pierres","Carabias","Concha","Torleque","Viella","Arro","Cegama","Jubia","Torquiendo","Loja"]
+        for zone in self:
+            zone.name = random.choice(towns);
+
+    @api.depends('lavel')
+    def _calculate_food_zone(self):
+        for zone in self:
+            zone.food = zone.lavel*2
+            
     food = fields.Integer(default=404)
     # live_heal = fields.Integer(default=_generate_live_heal)
     # liveHeal = fields.Integer(default=_generate_live_heal,readonly=True)
 
-    city = fields.Many2one("kill4city.city")
+    city = fields.Many2one("kill4city.city", ondelete='cascade')        
+    
+    @api.model
+    def create(self,values):
+        record = super(zone, self).create(values)
+        if record.food == 404:
+          record.write({'food': record.lavel*2})
+        return record
 
-    def conquer(self):
-        print("Hallo")
-        
+    @api.onchange('name')
+    def _onchange_name(self):
+        print("name change")
+    
+    @api.constrains('lavel')
+    def _check_something(self):
+        for record in self:
+            if record.lavel > 100:
+                raise ValidationError("The zone level must be between 1 and 100: %s" % record.lavel)
 
 class city(models.Model):
     _name = 'kill4city.city'
@@ -111,21 +148,76 @@ class weapon(models.Model):
     photo = fields.Image(max_width=100, max_height=100)
     use_by = fields.One2many("kill4city.player","weapon")
 
+class conquer(models.Model):
+    _name = 'kill4city.conquer'
+    _description = 'kill4city.conquer'
+
+    zone = fields.Many2one("kill4city.zone", required = True, ondelete='cascade')
+    player = fields.Many2one("kill4city.player", required = True, ondelete='cascade')
+    start_time = fields.Datetime(readonly=True)
+    end_time = fields.Datetime(compute='_calculate_end_time')
+    percentage_conquers = fields.Float(default=0)
+    player_life = fields.Integer(default=0)
 
 
+    @api.depends('start_time','player','zone')
+    def _calculate_end_time(self):
+        for conq in self:
+            p = conq.player.lavel
+            w = conq.player.weapon.damage
+            z = conq.zone.lavel
+            if p != 0 and z != 0:
+                time_end_calculate = math.log(z* (p*w),2)
+                conq.end_time = fields.Datetime.to_string(fields.Datetime.from_string(fields.datetime.now()) + timedelta(hours=time_end_calculate))
+                conq.start_time = fields.Datetime.to_string(datetime.now())
+                conq.player_life = conq.player.life
+            else:
+                conq.end_time = fields.Datetime.to_string(datetime.now())
+                # conq.zone.status = False
+    
+    @api.model
+    def create(self,values):
+        record = super(conquer, self).create(values)
+        # if record.start_time != "":    
+        #     record.start_time = fields.Datetime.to_string(datetime.now())
+        return record
 
+    @api.model
+    def update_conquer(self):
+        allConquer = self.search([])
+        for c in allConquer:
+            diff = c.end_time - c.start_time
+            days, seconds = diff.days, diff.seconds
+            hours = days * 24 + seconds 
+            minutes = (seconds % 3600)
+            seconds = seconds % 60
+            tmpone = hours + (minutes / 60 + ((seconds / 60)/60))
 
+            # then get the diference between end and now time 
+            diff = c.end_time - datetime.now()
+            days, seconds = diff.days, diff.seconds
+            hours = days * 24 + seconds 
+            minutes = (seconds % 3600)
+            seconds = seconds % 60
+            tmptwo = hours + (minutes / 60 + ((seconds / 60)/60))
 
-# class kill4city(models.Model):
-#     _name = 'kill4city.kill4city'
-#     _description = 'kill4city.kill4city'
+            # calculate the porcenta between the two times
+            result = (tmptwo * 100 /(tmpone)) - 100
 
-#     name = fields.Char()
-#     value = fields.Integer()
-#     value2 = fields.Float(compute="_value_pc", store=True)  #para usar el store=True hay que haver que la funcion dependa de un valor depends("name")
-#     description = fields.Text()
-#
-#     @api.depends('value')
-#     def _value_pc(self):
-#         for record in self:
-#             record.value2 = float(record.value) / 100
+            # Set the porcenta for procces bar 
+            c.zone.conquest = abs(result)
+            c.percentage_conquers = abs(result)
+
+            # player_life = c.player.life Aquiiiiiiiiiiii no vaaa buscate la vida
+            # Calculate player life damage
+            c.player.life -= c.percentage_conquers;
+            if c.zone.conquest >= 100:
+                c.zone.status = "released"
+            print("===CRON===")
+            print(c.percentage_conquers)
+
+    
+
+            
+                
+    
