@@ -7,7 +7,7 @@ import logging
 import math
 from openerp.exceptions import ValidationError
 
-
+# Git 29 dic
 
 class zone(models.Model):
     _name = 'kill4city.zone'
