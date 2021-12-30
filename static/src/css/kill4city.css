@@ -15,7 +15,7 @@
 }
 
 .card-body img {
-    width: 300px;
+    width: 100%;
     /* height: 300px; */
 }
 
@@ -23,6 +23,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.card-info p {
+    margin: 0;
 }
 
 .conquer-table {

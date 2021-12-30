@@ -48,19 +48,45 @@
                                         </p>
                                         <table class="conquer-table">
                                             <tr>
-                                                <th colspan="3">
+                                                <th colspan="2">
                                                     <field name="player" />
                                                 </th>
                                             </tr>
                                             <tr>
-                                                <td>
+                                                <td colspan="2">
                                                     <em>
+                                                        <strong>
+                                                            <field name="training_type" />
+                                                        </strong>
                                                         Training...
                                                     </em>
                                                     <!-- <field name="level" /> -->
                                                     <field name="training_bar" widget="progressbar" />
                                                 </td>
                                             </tr>
+                                            <tr>
+                                                <td>
+                                                    Start:
+                                                    <strong>
+                                                        <field name="start_time" />
+                                                    </strong>
+                                                </td>
+                                                <td>
+                                                    End:
+                                                    <strong>
+                                                        <field name="end_time" />
+                                                    </strong>
+                                                </td>
+                                            </tr>
+                                            <!-- <tr>
+                                                <td>
+                                                        <field name="start_power" />
+                                                        <field name="start_smart" />
+                                                </td>
+                                                <td>
+                                                    <button name="increment" type="object" string="New name" class="oe_highlight" />
+                                                </td>
+                                            </tr> -->
                                         </table>
                                     </a>
                                 </div>
