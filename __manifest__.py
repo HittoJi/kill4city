@@ -30,6 +30,7 @@
         'views/player.xml',
         'views/weapon.xml',
         'views/conquer.xml',
+        'views/training.xml',
         'views/views.xml',
         'views/templates.xml',
         'demo/weapon.xml',

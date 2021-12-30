@@ -4,9 +4,9 @@
             <field name="name">kill4city Zone list</field>
             <field name="model">kill4city.zone</field>
             <field name="arch" type="xml">
-                <tree decoration-danger="lavel>70">
+                <tree decoration-danger="level>70">
                     <field name="name" />
-                    <field name="lavel" />
+                    <field name="level" />
                     <field name="conquest" widget="progressbar" />
                     <field name="status" />
                     <field name="food" />
@@ -23,7 +23,7 @@
                     <sheet>
                         <group>
                             <field name="name" />
-                            <field name="lavel" />
+                            <field name="level" />
                             <field name="food" />
                             <button name="new_name" type="object" string="New name" class="oe_highlight"/>
                         </group>

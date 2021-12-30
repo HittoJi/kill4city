@@ -43,6 +43,10 @@ th {
     background-color: #dddddd;
 }
 
+.conquer-table em {
+    margin-right: 2em;
+}
+
 .o_kanban_view .oe_kanban_card .o_progressbar .o_progressbar_value,
 .o_kanban_view .o_kanban_record .o_progressbar .o_progressbar_value {
     width: 1em;
@@ -51,6 +55,10 @@ th {
 
 .o_progress {
     width: 12em;
+}
+
+.o_progressbar .o_progress .o_progressbar_complete {
+    background-color: #4BB543;
 }
 
 

@@ -1,0 +1,75 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="kill4city.training_list">
+            <field name="name">Kill4city Training list</field>
+            <field name="model">kill4city.training</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <!-- <button name="increment" type="object" string="New name" class="oe_highlight" /> -->
+                    <field name="player" />
+                    <field name="training_type" />
+                    <field name="start_time" />
+                    <field name="end_time" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="kill4city.training_form">
+            <field name="name">Kill4city Training list</field>
+            <field name="model">kill4city.training</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="player" />
+                            <field name="training_type" />
+                            <field name="start_time" />
+                            <field name="end_time" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="kill4city.training_kanban">
+            <field name="name">Kill4city training kanban</field>
+            <field name="model">kill4city.training</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="player" />
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="card-body">
+                                <div class="card-info">
+                                    <a type="open">
+                                        <p>
+                                            <img src="https://thumbs.gfycat.com/WhiteHonestIrukandjijellyfish-max-1mb.gif" alt="Not found"></img>
+                                        </p>
+                                        <table class="conquer-table">
+                                            <tr>
+                                                <th colspan="3">
+                                                    <field name="player" />
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em>
+                                                        Training...
+                                                    </em>
+                                                    <!-- <field name="level" /> -->
+                                                    <field name="training_bar" widget="progressbar" />
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </a>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+    </data>
+</odoo>

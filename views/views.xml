@@ -23,14 +23,20 @@
     <record model="ir.actions.act_window" id="kill4city.action_player_window">
       <field name="name">Player</field> <!-- name on top  -->
       <field name="res_model">kill4city.player</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">kanban,tree,form</field>
     </record>
 
     <record model="ir.actions.act_window" id="kill4city.action_weapon_window">
-      <field name="name">Player</field> <!-- name on top  -->
+      <field name="name">Weapons</field> <!-- name on top  -->
       <field name="res_model">kill4city.weapon</field>
       <!-- <field name="view_mode">tree,form</field> -->
       <field name="view_mode">tree,kanban,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="kill4city.action_training_window">
+      <field name="name">Training</field> <!-- name on top  -->
+      <field name="res_model">kill4city.training</field>
+      <field name="view_mode">kanban,tree,form</field>
     </record>
 
     <!-- server action to the one above -->
@@ -48,6 +54,7 @@
     <menuitem name="Conquer" id="kill4city.conquer_list" parent="kill4city.menu_game" action="kill4city.action_conquer_window" />
     <menuitem name="Character" id="kill4city.menu_zone3_list" parent="kill4city.menu_game2" action="kill4city.action_player_window" />
     <menuitem name="Weapon" id="kill4city.menu_zone4_list" parent="kill4city.menu_game2" action="kill4city.action_weapon_window" />
+    <menuitem name="Training" id="kill4city.menu_training_list" parent="kill4city.menu_game2" action="kill4city.action_training_window" />
     <!-- <menuitem name="List" id="kill4city.menu_zone3_list" parent="kill4city.menu_game" action="kill4city.action_city_window" /> -->
   </data>
 </odoo>

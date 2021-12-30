@@ -10,7 +10,7 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="name" />
-                    <field name="lavel" />
+                    <field name="level" />
                     <field name="life" widget="porcentpie" />
                 </tree>
             </field>
@@ -23,9 +23,9 @@
                     <sheet>
                         <group>
                             <field name="name" />
-                            <field name="lavel" />
+                            <field name="level" />
                             <field name="life" />
-                            <field name="lavel" />
+                            <field name="level" />
                             <field name="weapon" />
                             <field name="in_city" />
                         </group>
@@ -33,5 +33,107 @@
                 </form>
             </field>
         </record>
+        <record model="ir.ui.view" id="kill4city.player_kanban">
+            <field name="name">Kill4city player kanban</field>
+            <field name="model">kill4city.player</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="name" />
+                    <field name="level" />
+                    <field name="life" />
+                    <field name="level" />
+                    <field name="weapon" />
+                    <field name="in_city" />
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="card-body">
+                                <div class="card-info">
+                                    <a type="open">
+                                        <p>
+                                            <img src="https://i.pinimg.com/originals/2c/5a/57/2c5a57f4562aff17b9c2142b4b1453e1.gif" alt="Not found"></img>
+                                        </p>
+                                        <table class="conquer-table">
+                                            <tr>
+                                                <th colspan="3">
+                                                    Name:
+                                                    <field name="name" />
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em>
+                                                        Level
+                                                    </em>
+                                                    <!-- <field name="level" /> -->
+                                                    <field name="level" widget="progressbar" />
+                                                </td>
+                                                <td>
+                                                    <em>
+                                                    Life
+                                                </em>
+                                                    <field name="life" widget="progressbar" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em>
+                                                        Power
+                                                    </em>
+                                                    <!-- <field name="level" /> -->
+                                                    <field name="power" widget="progressbar" />
+                                                </td>
+                                                <td>
+                                                    <em>
+                                                        Smart
+                                                    </em>
+                                                    <!-- <field name="level" /> -->
+                                                    <field name="smart" widget="progressbar" />
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </a>
+
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- ___________________________________________ -->
+
+        <!-- ##################################################### -->
+
+        <!-- 
+        <record id="kill4city.player_kanban" model="ir.ui.view">
+            <field name="name">Negocity player kanban</field>
+            <field name="model">kill4city.player</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="name" />
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card  ">
+                                <div class=" d-flex">
+                                    <div class="oe_kanban_details d-flex flex-column">
+                                        <a type="open">
+                                            <h4 class="o_kanban_record_title oe_partner_heading">
+                                                <field name="name" />
+                                            </h4>
+                                        </a>
+                                    </div>
+
+                                    <div class="oe_kanban_details d-flex flex-column"></div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record> -->
+
+
+        <!-- ##################################################### -->
     </data>
 </odoo>

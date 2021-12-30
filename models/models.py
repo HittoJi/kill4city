@@ -17,7 +17,7 @@ class zone(models.Model):
         towns = ["Oscoz","Torrelara","Coscullano","Cicera","Haedillo","Eustaquios","Navarredondilla","Elda","Garayolza","Marne","Santiorjo","Delfiá","Malá","Noia","Puertas","Sardas","Felechosas","Bujursot","Betolaza","Batiao","Berzosa","Rigueira","Guaso","Bode","Logrosa","Vilamitjana","Cogela","Royo","Solmayor","Daneiro","Fornes","Medal","Infesta","Ludrio","Torregorda","Cereijido","Sanjurjo","Corres","Espasantes","Igea","Pierres","Carabias","Concha","Torleque","Viella","Arro","Cegama","Jubia","Torquiendo","Loja"]
         return random.choice(towns)
 
-    def _generate_zone_lavel(salf):
+    def _generate_zone_level(salf):
         # Futura mejora => Mirar la cantidad de zonas que tiene una ciudad 
                             # para generar minimo un 3% de zonas con un nivel 1 y
                             # un 5% de zonas al nivel 100;
@@ -27,9 +27,9 @@ class zone(models.Model):
     
 
 
-    lavel = fields.Integer(default=_generate_zone_lavel)
+    level = fields.Integer(default=_generate_zone_level)
     
-    # def _generate_live_heal(lavel):
+    # def _generate_live_heal(level):
     #     # Revisar
     #     return 202 * 2
 
@@ -51,10 +51,10 @@ class zone(models.Model):
         for zone in self:
             zone.name = random.choice(towns);
 
-    @api.depends('lavel')
+    @api.depends('level')
     def _calculate_food_zone(self):
         for zone in self:
-            zone.food = zone.lavel*2
+            zone.food = zone.level*2
             
     food = fields.Integer(default=404)
     # live_heal = fields.Integer(default=_generate_live_heal)
@@ -66,18 +66,18 @@ class zone(models.Model):
     def create(self,values):
         record = super(zone, self).create(values)
         if record.food == 404:
-          record.write({'food': record.lavel*2})
+          record.write({'food': record.level*2})
         return record
 
     @api.onchange('name')
     def _onchange_name(self):
         print("name change")
     
-    @api.constrains('lavel')
+    @api.constrains('level')
     def _check_something(self):
         for record in self:
-            if record.lavel > 100:
-                raise ValidationError("The zone level must be between 1 and 100: %s" % record.lavel)
+            if record.level > 100:
+                raise ValidationError("The zone level must be between 1 and 100: %s" % record.level)
 
 class city(models.Model):
     _name = 'kill4city.city'
@@ -111,6 +111,70 @@ class city(models.Model):
             city.max_players = city.zones/2
 
 
+class training(models.Model):
+    _name = 'kill4city.training'
+    _description = 'kill4city.training'
+
+    player = fields.Many2one("kill4city.player", required = True, ondelete='cascade')
+    training_type = fields.Selection([('brain', 'Brain'),('power','Power')] , required = True)
+    start_time = fields.Datetime(readonly=True)
+    end_time = fields.Datetime(readonly=True)
+    training_in_process = fields.Boolean(default=False)
+    training_bar = fields.Float(default=0)
+
+
+    @api.model
+    def create(self,values):
+        record = super(training, self).create(values)
+        record.start_time = fields.Datetime.to_string(datetime.now())
+        record.end_time = fields.Datetime.to_string(fields.Datetime.from_string(fields.datetime.now()) + timedelta(hours=168))
+        record.training_in_process = True
+        return record
+    
+    @api.model
+    def training_process(self):
+        allTraining = self.search([('training_in_process','=',True),('training_bar','>',100)])
+        for training in allTraining:
+            # Calculate % to increment
+            if training.training_type == 'brain':
+                next_reword = ((training.player.smart*2)/100) / 168
+            if training.training_type == 'power':
+                next_reword = ((training.player.power*2)/100) / 168
+                training.player.power += next_reword
+                training.training_bar += (100 * next_reword) / 2
+                training.player.life -= next_reword * 3
+
+            if training.start_time >= training.end_time:
+                training.training_in_process = False
+                print("Training has end")
+
+            print("Cron tringin done")
+
+                
+
+    # def increment(self):
+    #     allTraining = self.search([('training_in_process','=',True),('training_bar','<',100)])
+    #     for training in allTraining:
+    #         # Calculate % to increment
+    #         if training.training_type == 'brain':
+    #             next_reword = ((training.player.smart*2)/100) / 168
+    #         if training.training_type == 'power':
+    #             next_reword = ((training.player.power*2)/100) / 168
+    #         training.player.power += next_reword
+    #         training.training_bar += (100 * next_reword) / 2
+    #         training.player.life -= next_reword * 3
+
+    #         # training.start_time += timedelta(hours=50)
+
+    #         if training.start_time >= training.end_time:
+    #             training.training_in_process = False
+    #             print("Son iguales")
+    #         print("Cron tringin done")
+    #         print(training.player.life)
+    #         print(next_reword)
+
+            
+                
 
 
 
@@ -122,21 +186,19 @@ class player(models.Model):
         ranName = ["Isabel Saldaña","Mariam Contador","Noemi Monte","Vanessa Villalobos","Nerea Racionero","Uxia Barbero","Fatima Marinero","Nora Balderas","Ana Isabel Sallent","Ainoa Carpentier","Angel Hernández","Iago Jurado","Jose Maria Valderas","Alonso Panadero","Matias Villalba","Isaac Alcaide","Kevin Rabellino","Francisco Padrón","Jordi Val","Salvador Balderas","Gerard Morterero","Miguel Mallén","Alonso del Valle","Pol Domínguez","Jon Ferrero","Ramon Fuster o Fusté","Oliver Hernández","Sergi Bielsa","Rodrigo Enríquez","Pau Ascaso","Mar Valverde","Gabriela Santolaria","Patricia Ordóñez","Judith Siurana","Judit Villalobos","Mireya Pajarero","Clara Racionero","Carmen Maria Molinero","Zaira Martín","Neus Peña"]
         return random.choice(ranName)
 
+    def _calculate_random_num(salf):
+        return random.randint(3,30)
+
     name = fields.Char(default=_generate_player_name)
-    lavel = fields.Integer(default=1)
-    life = fields.Integer(default=20)
-    # weapon = fields.Integer(default=404)
+    level = fields.Integer(default=1)
+    life = fields.Float(default=100)
+    smart = fields.Float(default=_calculate_random_num)
+    power = fields.Float(default=_calculate_random_num)
+
     weapon = fields.Many2one("kill4city.weapon")
+    training = fields.Many2one("kill4city.training")
     in_city = fields.Many2one("kill4city.city",ondelete="set null")
-    #///aquiiii
-    
-    # @api.depends('city')
-    # def _get_city_available(self):
-    #     for b in self:
-    #         b.workers_available = (b.city.survivors - b.workers).filtered(
-    #             lambda w: len(w.city.buildings.workers.filtered(
-    #                 lambda ww: ww.id == w.id))
-    #                 ==0)
+    in_battle = fields.Boolean(default=False)
 
 
 class weapon(models.Model):
@@ -155,36 +217,75 @@ class conquer(models.Model):
     zone = fields.Many2one("kill4city.zone", required = True, ondelete='cascade')
     player = fields.Many2one("kill4city.player", required = True, ondelete='cascade')
     start_time = fields.Datetime(readonly=True)
-    end_time = fields.Datetime(compute='_calculate_end_time')
+    end_time = fields.Datetime(readonly=True)
+    # end_time = fields.Datetime(compute='_calculate_end_time')
     percentage_conquers = fields.Float(default=0)
     player_life = fields.Integer(default=0)
+    in_battle = fields.Boolean()
 
 
     @api.depends('start_time','player','zone')
     def _calculate_end_time(self):
         for conq in self:
-            p = conq.player.lavel
-            w = conq.player.weapon.damage
-            z = conq.zone.lavel
             if p != 0 and z != 0:
-                time_end_calculate = math.log(z* (p*w),2)
-                conq.end_time = fields.Datetime.to_string(fields.Datetime.from_string(fields.datetime.now()) + timedelta(hours=time_end_calculate))
-                conq.start_time = fields.Datetime.to_string(datetime.now())
                 conq.player_life = conq.player.life
-            else:
-                conq.end_time = fields.Datetime.to_string(datetime.now())
-                # conq.zone.status = False
-    
+            print("You just set the time")
+
     @api.model
     def create(self,values):
         record = super(conquer, self).create(values)
-        # if record.start_time != "":    
-        #     record.start_time = fields.Datetime.to_string(datetime.now())
+        if record.start_time != "":    
+            record.start_time = fields.Datetime.to_string(datetime.now())
+            # Calculate end time
+            p = record.player.level
+            w = record.player.weapon.damage
+            z = record.zone.level
+            time_end_calculate = math.log(z* (p*w),2)
+            record.end_time = fields.Datetime.to_string(fields.Datetime.from_string(fields.datetime.now()) + timedelta(hours=time_end_calculate))
+            record.player_life = record.player.life
+            record.in_battle = True
+
         return record
+
+
 
     @api.model
     def update_conquer(self):
-        allConquer = self.search([])
+        allConquer = self.search([('in_battle','=',True)])
+        # for c in allConquer:
+        #     diff = c.end_time - c.start_time
+        #     days, seconds = diff.days, diff.seconds
+        #     hours = days * 24 + seconds 
+        #     minutes = (seconds % 3600)
+        #     seconds = seconds % 60
+        #     tmpone = hours + (minutes / 60 + ((seconds / 60)/60))
+
+        #     # then get the diference between end and now time 
+        #     diff = c.end_time - datetime.now()
+        #     days, seconds = diff.days, diff.seconds
+        #     hours = days * 24 + seconds 
+        #     minutes = (seconds % 3600)
+        #     seconds = seconds % 60
+        #     tmptwo = hours + (minutes / 60 + ((seconds / 60)/60))
+
+        #     # calculate the porcenta between the two times
+        #     result = (tmptwo * 100 /(tmpone)) - 100
+
+        #     # Set the porcenta for procces bar 
+        #     c.zone.conquest = abs(result)
+        #     c.percentage_conquers = abs(result)
+
+        #     # player_life = c.player.life Aquiiiiiiiiiiii no vaaa buscate la vida
+        #     # Calculate player life damage
+        #     c.player.life -= c.percentage_conquers;
+        #     if c.zone.conquest >= 100:
+        #         c.zone.status = "released"
+        #     print("===CRON===")
+        #     c.in_battle = False
+        #     print(c.in_battle)
+
+    def increment(self):
+        allConquer = self.search([('in_battle','=',True)])
         for c in allConquer:
             diff = c.end_time - c.start_time
             days, seconds = diff.days, diff.seconds
@@ -193,7 +294,7 @@ class conquer(models.Model):
             seconds = seconds % 60
             tmpone = hours + (minutes / 60 + ((seconds / 60)/60))
 
-            # then get the diference between end and now time 
+            # get the diference between start and end time
             diff = c.end_time - datetime.now()
             days, seconds = diff.days, diff.seconds
             hours = days * 24 + seconds 
@@ -208,16 +309,40 @@ class conquer(models.Model):
             c.zone.conquest = abs(result)
             c.percentage_conquers = abs(result)
 
-            # player_life = c.player.life Aquiiiiiiiiiiii no vaaa buscate la vida
-            # Calculate player life damage
-            c.player.life -= c.percentage_conquers;
-            if c.zone.conquest >= 100:
-                c.zone.status = "released"
-            print("===CRON===")
-            print(c.percentage_conquers)
+            # Calculate player life damage (danger = Zone - player life)
+            
+
+            c.player.life -= c.zone.level - c.player.level
+            c.player_life = c.player.life
+
+            # Calculate zone damage by the player
+
+            # if the player is dead
+            if c.player.life <= 0:
+                c.player.life = 0
+                c.player_life = 0
+                c.in_battle = False
+
 
     
 
             
                 
-    
+    #  for conq in self:
+    #         p = conq.player.level
+    #         w = conq.player.weapon.damage
+    #         z = conq.zone.level
+    #         # if conq.record.start_time == "":    
+    #         #     conq.start_time = fields.Datetime.to_string(datetime.now())
+    #             # fix the time start*--------------------
+    #         if p != 0 and z != 0:
+    #             time_end_calculate = math.log(z* (p*w),2)
+    #             conq.end_time = fields.Datetime.to_string(fields.Datetime.from_string(fields.datetime.now()) + timedelta(hours=time_end_calculate))
+    #             # conq.start_time = fields.Datetime.to_string(datetime.now())
+    #             conq.player_life = conq.player.life
+    #             conq.player.in_battle = True
+    #             conq.in_battle = True
+    #             print("You just set the time")
+    #         else:
+    #             conq.end_time = fields.Datetime.to_string(datetime.now())
+    #             # conq.zone.status = False

@@ -7,7 +7,7 @@
             <field name="model">kill4city.conquer</field>
             <field name="arch" type="xml">
                 <tree>
-                    <!-- <button name="increment" type="object" string="New name" class="oe_highlight" /> -->
+                    <button name="increment" type="object" string="New name" class="oe_highlight" />
                     <field name="zone" />
                     <field name="player" />
                     <field name="start_time" />
@@ -29,7 +29,7 @@
                             <div class="card-body">
                                 <div class="card-info">
                                     <p>
-                                        <!-- <img src="https://i.blogs.es/0ca5da/ambulo_polar_wide/450_1000.jpg" alt=""></img> -->
+                                        <!-- <img src="https://i.blogs.es/0ca5da/ambulo_polar_wide/450_1000.jpg" alt="Not found"></img> -->
                                     </p>
                                     <h3>
                                         Zone:
@@ -62,6 +62,11 @@
                                             <td>Conquers</td>
                                             <td>
                                                 <field name="percentage_conquers" widget="progressbar" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <button name="increment" type="object" string="New name" class="oe_highlight" />
                                             </td>
                                         </tr>
                                     </table>
