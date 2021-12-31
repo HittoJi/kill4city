@@ -124,12 +124,14 @@ class training(models.Model):
     start_power = fields.Float(default=0)
     start_smart = fields.Float(default=0)
     start_life = fields.Float(default=0)
+    total_reword = fields.Float(default=0)
 
     @api.model
     def create(self,values):
         record = super(training, self).create(values)
         record.start_time = fields.Datetime.to_string(datetime.now())
-        record.end_time = fields.Datetime.to_string(fields.Datetime.from_string(fields.datetime.now()) + timedelta(hours=168))
+        # record.end_time = fields.Datetime.to_string(fields.Datetime.from_string(fields.datetime.now()) + timedelta(hours=168))
+        record.end_time = fields.Datetime.to_string(fields.Datetime.from_string(fields.datetime.now()) + timedelta(hours=0.05))
         record.start_power = record.player.power
         record.start_smart = record.player.smart
         record.start_life = record.player.life
@@ -138,66 +140,83 @@ class training(models.Model):
     
     @api.model
     def training_process(self):
-        allTraining = self.search([('training_in_process','=',True),('training_bar','<',100)])
+        allTraining = self.search([('training_in_process','=',True)])
         for training in allTraining:
-            # Calculate % to increment
-            time_elapsed = abs((training.start_time - training.end_time).total_seconds() / 60)
-            current_time = abs((datetime.now() - training.end_time).total_seconds() / 60)
-            progress = 100 - ((100*current_time)/time_elapsed)
-            training.training_bar = progress
-
-            if training.training_type == 'brain':
-                progress_estimate = 10 - (math.log(training.player.level * training.start_smart,3))
-                total_reword = (training.start_smart * progress_estimate) / 100
-                current_reword = (total_reword * progress) / 100
-                training.player.smart = training.start_smart + current_reword
-                training.player.life = training.start_life - (math.log(training.player.level * training.start_smart,2))
-
-
-            if training.training_type == 'power':
-                progress_estimate = 10 - (math.log(training.player.level * training.start_power,3))
-                total_reword = (training.start_power * progress_estimate) / 100
-                current_reword = (total_reword * progress) / 100
-                training.player.power = training.start_power + current_reword
-                training.player.life = training.start_life - (math.log(training.player.level * training.start_power,2))
-
-            if training.start_time >= training.end_time:
+            if datetime.now() >= training.end_time:
                 training.training_in_process = False
+                training.training_bar = 100
+                if training.training_type == 'brain':
+                    training.player.smart = training.start_smart + training.total_reword
+                if training.training_type == 'power':
+                    training.player.power = training.start_power + training.total_reword
                 print("Training has end")
 
-            print("Cron tringin done")
+            else:
+                # # Calculate % to increment
+                time_elapsed = abs((training.start_time - training.end_time).total_seconds() / 60)
+                current_time = abs((datetime.now() - training.end_time).total_seconds() / 60)
+                progress = 100 - ((100*current_time)/time_elapsed)
+                training.training_bar = progress
 
-                
+                if training.training_type == 'brain':
+                    progress_estimate = 10 - (math.log(training.player.level * training.start_smart,3))
+                    total_reword = (training.start_smart * progress_estimate) / 100
+                    current_reword = (total_reword * progress) / 100
+                    training.player.smart = training.start_smart + current_reword
+                    training.player.life = training.start_life - (math.log(training.player.level * training.start_smart,2))
+                    training.total_reword = total_reword
+
+                if training.training_type == 'power':
+                    progress_estimate = 10 - (math.log(training.player.level * training.start_power,3))
+                    total_reword = (training.start_power * progress_estimate) / 100
+                    current_reword = (total_reword * progress) / 100
+                    training.player.power = training.start_power + current_reword
+                    training.player.life = training.start_life - (math.log(training.player.level * training.start_power,2))
+                    training.total_reword = total_reword
+            print("Cron tringin done")
+            print(training.total_reword)
+
 
     # def increment(self):
-    #     allTraining = self.search([('training_in_process','=',True),('training_bar','<',100)])
+    #     allTraining = self.search([('training_in_process','=',True)])
     #     for training in allTraining:
-    #         time_elapsed = abs((training.start_time - training.end_time).total_seconds() / 60)
-    #         current_time = abs((datetime.now() - training.end_time).total_seconds() / 60)
-    #         progress = 100 - ((100*current_time)/time_elapsed)
-    #         training.training_bar = progress
-
-    #         if training.training_type == 'brain':
-    #             progress_estimate = 10 - (math.log(training.player.level * training.start_smart,3))
-    #             total_reword = (training.start_smart * progress_estimate) / 100
-    #             current_reword = (total_reword * progress) / 100
-    #             training.player.smart = training.start_smart + current_reword
-    #             training.player.life = training.start_life - (math.log(training.player.level * training.start_smart,2))
-
-
-    #         if training.training_type == 'power':
-    #             progress_estimate = 10 - (math.log(training.player.level * training.start_power,3))
-    #             total_reword = (training.start_power * progress_estimate) / 100
-    #             current_reword = (total_reword * progress) / 100
-    #             training.player.power = training.start_power + current_reword
-    #             training.player.life = training.start_life - (math.log(training.player.level * training.start_power,2))
-
-    #         if training.start_time >= training.end_time:
+    #         if datetime.now() >= training.end_time:
     #             training.training_in_process = False
+    #             training.training_bar = 100
+    #             if training.training_type == 'brain':
+    #                 training.player.smart = training.start_smart + training.total_reword
+    #             if training.training_type == 'power':
+    #                 training.player.power = training.start_power + training.total_reword
+                    
     #             print("Training has end")
+    #         else:
+    #             # # Calculate % to increment
+    #             time_elapsed = abs((training.start_time - training.end_time).total_seconds() / 60)
+    #             current_time = abs((datetime.now() - training.end_time).total_seconds() / 60)
+    #             progress = 100 - ((100*current_time)/time_elapsed)
+    #             training.training_bar = progress
 
+    #             if training.training_type == 'brain':
+    #                 progress_estimate = 10 - (math.log(training.player.level * training.start_smart,3))
+    #                 total_reword = (training.start_smart * progress_estimate) / 100
+    #                 current_reword = (total_reword * progress) / 100
+    #                 training.player.smart = training.start_smart + current_reword
+    #                 training.player.life = training.start_life - (math.log(training.player.level * training.start_smart,2))
+    #                 training.total_reword = total_reword
+
+    #             if training.training_type == 'power':
+    #                 progress_estimate = 10 - (math.log(training.player.level * training.start_power,3))
+    #                 total_reword = (training.start_power * progress_estimate) / 100
+    #                 current_reword = (total_reword * progress) / 100
+    #                 training.player.power = training.start_power + current_reword
+    #                 training.player.life = training.start_life - (math.log(training.player.level * training.start_power,2))
+    #                 training.total_reword = total_reword
+                
     #         print("Cron tringin done")
-    #         print(training.player.life)
+    #         print(training.total_reword)
+    #         print(datetime.now())
+    #         print(training.end_time)
+    #         # print(total_reword)
 
             
                 

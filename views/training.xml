@@ -80,11 +80,12 @@
                                             </tr>
                                             <!-- <tr>
                                                 <td>
-                                                        <field name="start_power" />
-                                                        <field name="start_smart" />
+                                                        <field name="start_power" /> -
+                                                        <field name="start_smart" /> -
+                                                        <field name="total_reword" />
                                                 </td>
                                                 <td>
-                                                    <button name="increment" type="object" string="New name" class="oe_highlight" />
+                                                    <button name="increment" type="object" string="New name" class="oe_highlight" style="padding: 15px 32px;"/>
                                                 </td>
                                             </tr> -->
                                         </table>
