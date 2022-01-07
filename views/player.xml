@@ -23,9 +23,9 @@
                     <sheet>
                         <group>
                             <field name="name" />
-                            <!-- <field name="level" />
+                            <field name="level" />
                             <field name="life" />
-                            <field name="level" /> -->
+                            <field name="level" />
                             <field name="weapon" />
                             <field name="in_city" />
                         </group>

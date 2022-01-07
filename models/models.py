@@ -130,8 +130,8 @@ class training(models.Model):
     def create(self,values):
         record = super(training, self).create(values)
         record.start_time = fields.Datetime.to_string(datetime.now())
-        # record.end_time = fields.Datetime.to_string(fields.Datetime.from_string(fields.datetime.now()) + timedelta(hours=168))
-        record.end_time = fields.Datetime.to_string(fields.Datetime.from_string(fields.datetime.now()) + timedelta(hours=0.05))
+        record.end_time = fields.Datetime.to_string(fields.Datetime.from_string(fields.datetime.now()) + timedelta(hours=168))
+        # record.end_time = fields.Datetime.to_string(fields.Datetime.from_string(fields.datetime.now()) + timedelta(hours=0.05))
         record.start_power = record.player.power
         record.start_smart = record.player.smart
         record.start_life = record.player.life
