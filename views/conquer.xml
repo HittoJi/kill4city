@@ -86,7 +86,7 @@
                     <sheet>
                         <group>
                             <field name="zone" />
-                            <field name="player" />
+                            <field name="player" domain="[('occupied', '=', False)]"/>
                             <field name="start_time" />
                             <field name="end_time" />
                         </group>

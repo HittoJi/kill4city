@@ -54,7 +54,12 @@ th {
 .o_kanban_view .oe_kanban_card .o_progressbar .o_progressbar_value,
 .o_kanban_view .o_kanban_record .o_progressbar .o_progressbar_value {
     width: 1em;
-    margin-right: 2em;
+    margin-right: 3em;
+}
+
+.o_kanban_view .oe_kanban_card .o_progressbar .o_progress,
+.o_kanban_view .o_kanban_record .o_progressbar .o_progress {
+    margin-left: 6px;
 }
 
 .o_progress {
@@ -64,6 +69,149 @@ th {
 .o_progressbar .o_progress .o_progressbar_complete {
     background-color: #4BB543;
 }
+
+.o_list_view .o_list_table thead>tr>th:not(.o_list_record_selector).o_list_number_th {
+    text-align: left;
+}
+
+.o_list_view .o_list_table tbody>tr>td:not(.o_list_record_selector).o_list_number {
+    text-align: left;
+}
+
+.cancel_training {
+    background-color: #ff0000;
+    border: none;
+}
+
+.cancel_training:after {
+    content: 'Cancel training';
+}
+
+
+/*************************/
+
+CSS BTN Training .button-container-1 {
+    position: relative;
+    width: 100px;
+    height: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 6vh;
+    overflow: hidden;
+    border: 1px solid;
+    font-family: "Lato", sans-serif;
+    font-weight: 300;
+    font-size: 20px;
+    transition: 0.5s;
+    letter-spacing: 1px;
+    border-radius: 8px;
+}
+
+.button-container-1 button {
+    width: 101%;
+    height: 100%;
+    font-family: "Lato", sans-serif;
+    font-weight: 300;
+    font-size: 11px;
+    letter-spacing: 1px;
+    font-weight: bold;
+    background: rgb(0, 0, 0);
+    -webkit-mask: url("https://raw.githubusercontent.com/robin-dela/css-mask-animation/master/img/nature-sprite.png");
+    mask: url("https://raw.githubusercontent.com/robin-dela/css-mask-animation/master/img/nature-sprite.png");
+    -webkit-mask-size: 2300% 100%;
+    mask-size: 2300% 100%;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    -webkit-animation: ani2 0.7s steps(22) forwards;
+    animation: ani2 0.7s steps(22) forwards;
+    /* transition-delay: .3s; */
+}
+
+.button-container-1 button:hover {
+    -webkit-animation: ani 0.7s steps(22) forwards;
+    animation: ani 0.7s steps(22) forwards;
+    background: rgb(255, 0, 0);
+}
+
+.mas {
+    position: absolute;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    width: 101%;
+    font-family: "Lato", sans-serif;
+    font-weight: 300;
+    position: absolute;
+    font-size: 15px;
+    margin-top: 17px;
+    overflow: hidden;
+    font-weight: bold;
+    margin-top: 0px;
+    margin-left: -26px;
+    transition-delay: 1s;
+}
+
+@-webkit-keyframes ani {
+    from {
+        -webkit-mask-position: 0 0;
+        mask-position: 0 0;
+    }
+    to {
+        -webkit-mask-position: 100% 0;
+        mask-position: 100% 0;
+    }
+}
+
+@keyframes ani {
+    from {
+        -webkit-mask-position: 0 0;
+        mask-position: 0 0;
+    }
+    to {
+        -webkit-mask-position: 100% 0;
+        mask-position: 100% 0;
+    }
+}
+
+@-webkit-keyframes ani2 {
+    from {
+        -webkit-mask-position: 100% 0;
+        mask-position: 100% 0;
+    }
+    to {
+        -webkit-mask-position: 0 0;
+        mask-position: 0 0;
+    }
+}
+
+@keyframes ani2 {
+    from {
+        -webkit-mask-position: 100% 0;
+        mask-position: 100% 0;
+    }
+    to {
+        -webkit-mask-position: 0 0;
+        mask-position: 0 0;
+    }
+}
+
+
+/* 
+thead tr th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.ui-sortable tr td {
+    text-align: center;
+    vertical-align: middle;
+} */
+
+
+/* .o_data_row td {
+    text-align: center;
+    vertical-align: middle;
+} */
 
 
 /* tr>th{

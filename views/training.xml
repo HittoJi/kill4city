@@ -10,6 +10,8 @@
                     <field name="training_type" />
                     <field name="start_time" />
                     <field name="end_time" />
+                    <!-- <field name="training_in_process"> [('training_in_process','=',True)]</field> -->
+
                 </tree>
             </field>
         </record>
@@ -21,7 +23,7 @@
                 <form>
                     <sheet>
                         <group>
-                            <field name="player" />
+                            <field name="player" domain="[('occupied', '=', False)]"/>
                             <field name="training_type" />
                             <field name="start_time" />
                             <field name="end_time" />
@@ -44,7 +46,8 @@
                                 <div class="card-info">
                                     <a type="open">
                                         <p>
-                                            <img src="https://thumbs.gfycat.com/WhiteHonestIrukandjijellyfish-max-1mb.gif" alt="Not found"></img>
+                                            <!-- <img src="https://thumbs.gfycat.com/WhiteHonestIrukandjijellyfish-max-1mb.gif" alt="Not found"></img> -->
+                                            <img src="/kill4city/static/src/img/training-1.gif" alt="Not found"></img>
                                         </p>
                                         <table class="conquer-table">
                                             <tr>
@@ -76,6 +79,15 @@
                                                     <strong>
                                                         <field name="end_time" />
                                                     </strong>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <div class="button-container-1">
+                                                        <span class="mas">Cancel training</span>
+                                                        <button id='work' type="object" name="cancel_training" >Cancel training</button>
+                                                    </div>
+                                                    <!-- <button name="cancel_training" type="object" class="cancel_training"/> -->
                                                 </td>
                                             </tr>
                                             <!-- <tr>

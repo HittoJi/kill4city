@@ -36,6 +36,8 @@
     <record model="ir.actions.act_window" id="kill4city.action_training_window">
       <field name="name">Training</field> <!-- name on top  -->
       <field name="res_model">kill4city.training</field>
+      <field name="domain"> [('training_in_process','=',True)]</field>
+      <!-- <field name="context">{'training_in_process': True, 'search_default_player_partner': 1}</field> -->
       <field name="view_mode">kanban,tree,form</field>
     </record>
 
