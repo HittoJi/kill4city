@@ -7,9 +7,11 @@
                 <tree decoration-danger="level>70">
                     <field name="name" />
                     <field name="level" />
+                    <field name="food" />
+                    <field name="defense" />
+                    <field name="danger" />
                     <field name="conquest" widget="progressbar" />
                     <field name="status" />
-                    <field name="food" />
                     <!-- <button name="repair" type="object" string="Repair" class="oe_highlight" /> -->
                     <button name="zone" string="zone" class="oe_highlight" />
                 </tree>

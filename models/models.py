@@ -28,10 +28,35 @@ class zone(models.Model):
 
 
     level = fields.Integer(default=_generate_zone_level)
+    defense = fields.Integer(compute="_calculate_defense")
+    danger = fields.Integer(compute="_calculate_danger")
+
+    @api.depends('level','food')
+    def _calculate_defense(self):
+        for zone in self:
+            if zone.level != 0 and zone.food != 404:
+                min_num = zone.level - 5
+                max_num = zone.level + 5
+                zone.defense = random.randint(min_num, max_num)
+                if zone.defense > 100:
+                    zone.defense = 100
+                if zone.defense < 3:
+                    zone.defense = 5
+                # zone.defense = (zone.level + zone.food) / 2
+            
     
-    # def _generate_live_heal(level):
-    #     # Revisar
-    #     return 202 * 2
+    @api.depends('level','food','defense') #aqui ahora
+    def _calculate_danger(self):
+        for zone in self:
+            if zone.level != 0 and zone.food != 404 and zone.defense != 0:
+                min_num = zone.defense - 5
+                max_num = zone.food + 5
+                zone.danger = random.randint(min_num, max_num)
+                if zone.danger > 100:
+                    zone.danger = 100
+                if zone.danger < 3:
+                    zone.danger = 5
+            #    zone.danger = (zone.level + zone.food + zone.defense) / 3
 
 
     name = fields.Char(default=_generate_town_name)
@@ -87,7 +112,7 @@ class city(models.Model):
         citys = ["Willesden","Chesterfield","Hewe","Orilon","Hartlepool","Dragontail","Whitebridge","Beckton","Achnasheen","Foolshope","Mirstone","Aynor","Nearon","Drumnadrochit","Oldham","Hirane","Haedleigh","Calcherth","Dundee","Auchenshuggle","Clare View Point","Dumbarton","Haling Cove","Damerel","Bredon","Axminster","Cesterfield","Todmorden","Blencalgo","Worcester"]
         return random.choice(citys)
     def _generate_zones(salf):
-        return random.randint(2,5)
+        return random.randint(2,50)
 
 
     name = fields.Char(default=_generate_city_name)
@@ -233,111 +258,134 @@ class conquer(models.Model):
     zone = fields.Many2one("kill4city.zone", required = True, ondelete='cascade')
     player = fields.Many2one("kill4city.player", required = True, ondelete='cascade')
     start_time = fields.Datetime(readonly=True)
-    end_time = fields.Datetime(readonly=True)
-    # end_time = fields.Datetime(compute='_calculate_end_time')
+    # end_time = fields.Datetime(readonly=True)
+    end_time = fields.Datetime(compute='_calculate_end_time')
     percentage_conquers = fields.Float(default=0)
     player_life = fields.Integer(default=0)
     in_battle = fields.Boolean()
 
-
-    @api.depends('start_time','player','zone')
-    def _calculate_end_time(self):
-        for conq in self:
-            if p != 0 and z != 0:
-                conq.player_life = conq.player.life
-            print("You just set the time")
-
     @api.model
     def create(self,values):
         record = super(conquer, self).create(values)
-        if record.start_time != "":    
-            record.start_time = fields.Datetime.to_string(datetime.now())
-            # Calculate end time
-            p = record.player.level
-            w = record.player.weapon.damage
-            z = record.zone.level
-            time_end_calculate = math.log(z* (p*w),2)
-            record.end_time = fields.Datetime.to_string(fields.Datetime.from_string(fields.datetime.now()) + timedelta(hours=time_end_calculate))
-            record.player_life = record.player.life
-            record.in_battle = True
-
+        record.start_time = fields.Datetime.to_string(datetime.now())
         return record
 
+    @api.depends('start_time','player','zone')
+    def _calculate_end_time(self):
+            for conquer in self:
+                if conquer.start_time != "": 
+                    # Calculate how dangers is the player 
+                    player_calculate = (conquer.player.level * conquer.player.power * conquer.player.smart) / 3
+                    if conquer.player.weapon.damage != 0: # if is == 0 the player has no weapon
+                        player_calculate = player_calculate + ((player_calculate * conquer.player.weapon.damage) / 100)
+                    # Calculate how dangers is the zone for the player
+                    # ... ... ... 
+                    time_end_calculate = math.log(1* (33*2),2)
+                    print("player_calculate after if => " ,player_calculate)
+                    print(conquer.player.weapon.damage)
+                    print("Calculate end time")
+                    conquer.end_time = fields.Datetime.to_string(datetime.now())
 
 
-    @api.model
-    def update_conquer(self):
-        allConquer = self.search([('in_battle','=',True)])
-        # for c in allConquer:
-        #     diff = c.end_time - c.start_time
-        #     days, seconds = diff.days, diff.seconds
-        #     hours = days * 24 + seconds 
-        #     minutes = (seconds % 3600)
-        #     seconds = seconds % 60
-        #     tmpone = hours + (minutes / 60 + ((seconds / 60)/60))
 
-        #     # then get the diference between end and now time 
-        #     diff = c.end_time - datetime.now()
-        #     days, seconds = diff.days, diff.seconds
-        #     hours = days * 24 + seconds 
-        #     minutes = (seconds % 3600)
-        #     seconds = seconds % 60
-        #     tmptwo = hours + (minutes / 60 + ((seconds / 60)/60))
+    # @api.depends('start_time','player','zone')
+    # def _calculate_end_time(self):
+    #     for conq in self:
+    #         if p != 0 and z != 0:
+    #             conq.player_life = conq.player.life
+    #         print("You just set the time")
 
-        #     # calculate the porcenta between the two times
-        #     result = (tmptwo * 100 /(tmpone)) - 100
+    # @api.model
+    # def create(self,values):
+    #     record = super(conquer, self).create(values)
+    #     if record.start_time != "":    
+    #         record.start_time = fields.Datetime.to_string(datetime.now())
+    #         # Calculate end time
+    #         p = record.player.level
+    #         w = record.player.weapon.damage
+    #         z = record.zone.level
+    #         time_end_calculate = math.log(z* (p*w),2)
+    #         record.end_time = fields.Datetime.to_string(fields.Datetime.from_string(fields.datetime.now()) + timedelta(hours=time_end_calculate))
+    #         record.player_life = record.player.life
+    #         record.in_battle = True
 
-        #     # Set the porcenta for procces bar 
-        #     c.zone.conquest = abs(result)
-        #     c.percentage_conquers = abs(result)
+    #     return record
 
-        #     # player_life = c.player.life Aquiiiiiiiiiiii no vaaa buscate la vida
-        #     # Calculate player life damage
-        #     c.player.life -= c.percentage_conquers;
-        #     if c.zone.conquest >= 100:
-        #         c.zone.status = "released"
-        #     print("===CRON===")
-        #     c.in_battle = False
-        #     print(c.in_battle)
 
-    def increment(self):
-        allConquer = self.search([('in_battle','=',True)])
-        for c in allConquer:
-            diff = c.end_time - c.start_time
-            days, seconds = diff.days, diff.seconds
-            hours = days * 24 + seconds 
-            minutes = (seconds % 3600)
-            seconds = seconds % 60
-            tmpone = hours + (minutes / 60 + ((seconds / 60)/60))
 
-            # get the diference between start and end time
-            diff = c.end_time - datetime.now()
-            days, seconds = diff.days, diff.seconds
-            hours = days * 24 + seconds 
-            minutes = (seconds % 3600)
-            seconds = seconds % 60
-            tmptwo = hours + (minutes / 60 + ((seconds / 60)/60))
+    # @api.model
+    # def update_conquer(self):
+    #     allConquer = self.search([('in_battle','=',True)])
+    #     # for c in allConquer:
+    #     #     diff = c.end_time - c.start_time
+    #     #     days, seconds = diff.days, diff.seconds
+    #     #     hours = days * 24 + seconds 
+    #     #     minutes = (seconds % 3600)
+    #     #     seconds = seconds % 60
+    #     #     tmpone = hours + (minutes / 60 + ((seconds / 60)/60))
 
-            # calculate the porcenta between the two times
-            result = (tmptwo * 100 /(tmpone)) - 100
+    #     #     # then get the diference between end and now time 
+    #     #     diff = c.end_time - datetime.now()
+    #     #     days, seconds = diff.days, diff.seconds
+    #     #     hours = days * 24 + seconds 
+    #     #     minutes = (seconds % 3600)
+    #     #     seconds = seconds % 60
+    #     #     tmptwo = hours + (minutes / 60 + ((seconds / 60)/60))
 
-            # Set the porcenta for procces bar 
-            c.zone.conquest = abs(result)
-            c.percentage_conquers = abs(result)
+    #     #     # calculate the porcenta between the two times
+    #     #     result = (tmptwo * 100 /(tmpone)) - 100
 
-            # Calculate player life damage (danger = Zone - player life)
+    #     #     # Set the porcenta for procces bar 
+    #     #     c.zone.conquest = abs(result)
+    #     #     c.percentage_conquers = abs(result)
+
+    #     #     # player_life = c.player.life Aquiiiiiiiiiiii no vaaa buscate la vida
+    #     #     # Calculate player life damage
+    #     #     c.player.life -= c.percentage_conquers;
+    #     #     if c.zone.conquest >= 100:
+    #     #         c.zone.status = "released"
+    #     #     print("===CRON===")
+    #     #     c.in_battle = False
+    #     #     print(c.in_battle)
+
+    # def increment(self):
+    #     allConquer = self.search([('in_battle','=',True)])
+    #     for c in allConquer:
+    #         diff = c.end_time - c.start_time
+    #         days, seconds = diff.days, diff.seconds
+    #         hours = days * 24 + seconds 
+    #         minutes = (seconds % 3600)
+    #         seconds = seconds % 60
+    #         tmpone = hours + (minutes / 60 + ((seconds / 60)/60))
+
+    #         # get the diference between start and end time
+    #         diff = c.end_time - datetime.now()
+    #         days, seconds = diff.days, diff.seconds
+    #         hours = days * 24 + seconds 
+    #         minutes = (seconds % 3600)
+    #         seconds = seconds % 60
+    #         tmptwo = hours + (minutes / 60 + ((seconds / 60)/60))
+
+    #         # calculate the porcenta between the two times
+    #         result = (tmptwo * 100 /(tmpone)) - 100
+
+    #         # Set the porcenta for procces bar 
+    #         c.zone.conquest = abs(result)
+    #         c.percentage_conquers = abs(result)
+
+    #         # Calculate player life damage (danger = Zone - player life)
             
 
-            c.player.life -= c.zone.level - c.player.level
-            c.player_life = c.player.life
+    #         c.player.life -= c.zone.level - c.player.level
+    #         c.player_life = c.player.life
 
-            # Calculate zone damage by the player
+    #         # Calculate zone damage by the player
 
-            # if the player is dead
-            if c.player.life <= 0:
-                c.player.life = 0
-                c.player_life = 0
-                c.in_battle = False
+    #         # if the player is dead
+    #         if c.player.life <= 0:
+    #             c.player.life = 0
+    #             c.player_life = 0
+    #             c.in_battle = False
 
 
     

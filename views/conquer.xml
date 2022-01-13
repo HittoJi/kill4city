@@ -7,7 +7,7 @@
             <field name="model">kill4city.conquer</field>
             <field name="arch" type="xml">
                 <tree>
-                    <button name="increment" type="object" string="New name" class="oe_highlight" />
+                    <!-- <button name="increment" type="object" string="New name" class="oe_highlight" /> -->
                     <field name="zone" />
                     <field name="player" />
                     <field name="start_time" />
@@ -66,7 +66,7 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <button name="increment" type="object" string="New name" class="oe_highlight" />
+                                                <!-- <button name="increment" type="object" string="New name" class="oe_highlight" /> -->
                                             </td>
                                         </tr>
                                     </table>
