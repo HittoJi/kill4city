@@ -28,48 +28,40 @@ class zone(models.Model):
 
 
     level = fields.Integer(default=_generate_zone_level)
-    defense = fields.Integer(compute="_calculate_defense")
-    danger = fields.Integer(compute="_calculate_danger")
 
-    @api.depends('level','food')
-    def _calculate_defense(self):
-        for zone in self:
-            if zone.level != 0 and zone.food != 404:
-                min_num = zone.level - 5
-                max_num = zone.level + 5
-                zone.defense = random.randint(min_num, max_num)
-                if zone.defense > 100:
-                    zone.defense = 100
-                if zone.defense < 3:
-                    zone.defense = 5
-                # zone.defense = (zone.level + zone.food) / 2
-            
+    defense = fields.Integer(default=0)
+    danger = fields.Integer(default=0)
+
+
     
-    @api.depends('level','food','defense') #aqui ahora
-    def _calculate_danger(self):
-        for zone in self:
-            if zone.level != 0 and zone.food != 404 and zone.defense != 0:
-                min_num = zone.defense - 5
-                max_num = zone.food + 5
-                zone.danger = random.randint(min_num, max_num)
-                if zone.danger > 100:
-                    zone.danger = 100
-                if zone.danger < 3:
-                    zone.danger = 5
-            #    zone.danger = (zone.level + zone.food + zone.defense) / 3
+    def _calculate_defense(salf):
+        calculate_defense = 0
+        for zone in salf:
+            min_num = zone.level - 5
+            max_num = zone.level + 5
+            calculate_defense = random.randint(min_num, max_num)
+            # if calculate_danger > 100:
+            # calculate_danger = 100
+            # if calculate_danger < 3:
+            # calculate_danger = 5
+        return abs(calculate_defense)
+
+    def _calculate_danger(salf):
+        calculate_danger = 0
+        for zone in salf:
+            min_num = zone.defense - 5
+            max_num = zone.food + 5
+            calculate_danger = random.randint(min_num, max_num)
+            # if calculate_danger > 100:
+            # calculate_danger = 100
+            # if calculate_danger < 3:
+            # calculate_danger = 5
+        return abs(calculate_danger)
 
 
     name = fields.Char(default=_generate_town_name)
     conquest = fields.Float()
-    # conquest = fields.Float(compute='_calculate_conquer_porcenta_zone')
     status = fields.Char(default="Invaded")
-    # status = fields.Boolean()
-    
-    # @api.depends('status')
-    # def _calculate_conquer_porcenta_zone(self):
-    #     for zone in self:
-    #         if zone.status:
-    #             zone.conquest = 70
                 
     def new_name(self):
         towns = ["Oscoz","Torrelara","Coscullano","Cicera","Haedillo","Eustaquios","Navarredondilla","Elda","Garayolza","Marne","Santiorjo","Delfiá","Malá","Noia","Puertas","Sardas","Felechosas","Bujursot","Betolaza","Batiao","Berzosa","Rigueira","Guaso","Bode","Logrosa","Vilamitjana","Cogela","Royo","Solmayor","Daneiro","Fornes","Medal","Infesta","Ludrio","Torregorda","Cereijido","Sanjurjo","Corres","Espasantes","Igea","Pierres","Carabias","Concha","Torleque","Viella","Arro","Cegama","Jubia","Torquiendo","Loja"]
@@ -82,8 +74,6 @@ class zone(models.Model):
             zone.food = zone.level*2
             
     food = fields.Integer(default=404)
-    # live_heal = fields.Integer(default=_generate_live_heal)
-    # liveHeal = fields.Integer(default=_generate_live_heal,readonly=True)
 
     city = fields.Many2one("kill4city.city", ondelete='cascade')        
     
@@ -91,7 +81,10 @@ class zone(models.Model):
     def create(self,values):
         record = super(zone, self).create(values)
         if record.food == 404:
-          record.write({'food': record.level*2})
+            record.write({'food': record.level*2})
+            record.defense = record._calculate_defense()
+            record.danger = record._calculate_danger()
+        
         return record
 
     @api.onchange('name')
@@ -258,8 +251,8 @@ class conquer(models.Model):
     zone = fields.Many2one("kill4city.zone", required = True, ondelete='cascade')
     player = fields.Many2one("kill4city.player", required = True, ondelete='cascade')
     start_time = fields.Datetime(readonly=True)
-    # end_time = fields.Datetime(readonly=True)
-    end_time = fields.Datetime(compute='_calculate_end_time')
+    end_time = fields.Datetime(readonly=True)
+    # end_time = fields.Datetime(compute='_calculate_end_time')
     percentage_conquers = fields.Float(default=0)
     player_life = fields.Integer(default=0)
     in_battle = fields.Boolean()
@@ -268,25 +261,58 @@ class conquer(models.Model):
     def create(self,values):
         record = super(conquer, self).create(values)
         record.start_time = fields.Datetime.to_string(datetime.now())
+        record.end_time = record._calculate_end_time()
         return record
 
-    @api.depends('start_time','player','zone')
+    # @api.depends('start_time','player','zone')
     def _calculate_end_time(self):
             for conquer in self:
-                if conquer.start_time != "": 
-                    # Calculate how dangers is the player 
-                    player_calculate = (conquer.player.level * conquer.player.power * conquer.player.smart) / 3
-                    if conquer.player.weapon.damage != 0: # if is == 0 the player has no weapon
-                        player_calculate = player_calculate + ((player_calculate * conquer.player.weapon.damage) / 100)
-                    # Calculate how dangers is the zone for the player
-                    # ... ... ... 
-                    time_end_calculate = math.log(1* (33*2),2)
-                    print("player_calculate after if => " ,player_calculate)
-                    print(conquer.player.weapon.damage)
-                    print("Calculate end time")
-                    conquer.end_time = fields.Datetime.to_string(datetime.now())
+                print("En el IF==============================")
+                # Calculate how dangers is the player 
+                player_calculate = ((conquer.player.level * conquer.player.power * conquer.player.smart) / 3)
+                if conquer.player.weapon.damage != 0: # if is == 0 the player has no weapon
+                    player_calculate = player_calculate + ((player_calculate * conquer.player.weapon.damage) / 100)
+                # Calculate how dangers is the zone for the player
+                zone_calculate = abs(((conquer.zone.level * conquer.zone.defense * conquer.zone.danger) / 3))
+                # ... ... ... 
+                time_end_calculate = abs(zone_calculate - player_calculate)
+                print("time_end_calculate =>" , time_end_calculate)
+                print("zone_calculate => ", zone_calculate)
+                print("player_calculate => ", player_calculate)
+                # print("zone_calculate => ", zone_calculate)
+                # time_end_calculate = math.log(1* (zone_calculate*player_calculate),2)
+
+                return fields.Datetime.to_string(fields.Datetime.from_string(conquer.start_time) + timedelta(hours=time_end_calculate))
+                    
 
 
+    def increment(self):
+        allConquer = self.search([])
+        for c in allConquer:
+            diff = c.end_time - c.start_time
+            days, seconds = diff.days, diff.seconds
+            hours = days * 24 + seconds 
+            minutes = (seconds % 3600)
+            seconds = seconds % 60
+            tmpone = hours + (minutes / 60 + ((seconds / 60)/60))
+
+            # then get the diference between end and now time 
+            diff = c.end_time - datetime.now()
+            days, seconds = diff.days, diff.seconds
+            hours = days * 24 + seconds 
+            minutes = (seconds % 3600)
+            seconds = seconds % 60
+            tmptwo = hours + (minutes / 60 + ((seconds / 60)/60))
+
+            # calculate the porcenta between the two times
+            result = (tmptwo * 100 /(tmpone)) - 100
+
+            print('result =>', result)
+            print((( c.player.level *  c.player.power *  c.player.smart) / 3))
+            print(" c.zone.level => ", c.zone.level)
+            print(" c.zone.defense => ", c.zone.defense)
+            print(" c.zone.danger => ", c.zone.danger)
+            print((( c.zone.level *  c.zone.defense *  c.zone.danger) / 3))
 
     # @api.depends('start_time','player','zone')
     # def _calculate_end_time(self):
