@@ -254,20 +254,26 @@ class conquer(models.Model):
     end_time = fields.Datetime(readonly=True)
     # end_time = fields.Datetime(compute='_calculate_end_time')
     percentage_conquers = fields.Float(default=0)
-    player_life = fields.Integer(default=0)
+    player_life = fields.Float(default=0)
+    player_life_at_start = fields.Float(default=0)
     in_battle = fields.Boolean()
+    player_win = fields.Boolean(default=False)
+    player_life_cost = fields.Integer(default=0)
+    increment_zone_values = fields.Boolean(default=True)
+    # player_is_p
 
     @api.model
     def create(self,values):
         record = super(conquer, self).create(values)
         record.start_time = fields.Datetime.to_string(datetime.now())
         record.end_time = record._calculate_end_time()
+        record.player_life = record.player.life
+        record.player_life_at_start = record.player.life
         return record
 
     # @api.depends('start_time','player','zone')
     def _calculate_end_time(self):
             for conquer in self:
-                print("En el IF==============================")
                 # Calculate how dangers is the player 
                 player_calculate = ((conquer.player.level * conquer.player.power * conquer.player.smart) / 3)
                 if conquer.player.weapon.damage != 0: # if is == 0 the player has no weapon
@@ -275,44 +281,70 @@ class conquer(models.Model):
                 # Calculate how dangers is the zone for the player
                 zone_calculate = abs(((conquer.zone.level * conquer.zone.defense * conquer.zone.danger) / 3))
                 # ... ... ... 
-                time_end_calculate = abs(zone_calculate - player_calculate)
+                # time_end_calculate = abs(zone_calculate - player_calculate)
+                time_end_calculate = math.log(zone_calculate * player_calculate,2)
+                if player_calculate > zone_calculate:
+                    conquer.player_win = True
+                    # print("conquer.player_life_cost => ",conquer.player_life_cost)
+                conquer.player_life_cost = ((((100*zone_calculate)/player_calculate)/3)*2.2)
+
                 print("time_end_calculate =>" , time_end_calculate)
-                print("zone_calculate => ", zone_calculate)
-                print("player_calculate => ", player_calculate)
+                print("math.log(z* (p*w),2) =>  " , math.log(zone_calculate * player_calculate,2))
+                # print("zone_calculate => ", zone_calculate)
+                # print("player_calculate => ", player_calculate)
                 # print("zone_calculate => ", zone_calculate)
                 # time_end_calculate = math.log(1* (zone_calculate*player_calculate),2)
 
                 return fields.Datetime.to_string(fields.Datetime.from_string(conquer.start_time) + timedelta(hours=time_end_calculate))
                     
+    def calculate_time_difference_percentage(self):
+        allConquer = self.search([])
+        for c in allConquer:
+            #Calculate the time difference between two times in minutes
+            time_delta = (c.end_time - c.start_time)
+            total_seconds = time_delta.total_seconds()
+            total_minutes = total_seconds/60
+
+            time_delta = (c.end_time - datetime.now())
+            total_seconds = time_delta.total_seconds()
+            minutes_from_now = total_seconds/60
+
+            # Calculate the percentage of time elapsed
+            elapsed_time_in_percent = ((100*(total_minutes - minutes_from_now))/total_minutes)
+        return elapsed_time_in_percent
+
+    def take_players_life(self):
+        allConquer = self.search([])
+        for c in allConquer:
+            # percentage_of_life_cost = ((c.percentage_conquers*c.player_life_cost)/100)
+            # life_cost_amount = ((100*percentage_of_life_cost)/c.player_life_cost)
+            life_cost_amount = ((c.player_life_cost*c.percentage_conquers)/100)
+        return c.player_life_at_start - life_cost_amount
 
 
     def increment(self):
         allConquer = self.search([])
         for c in allConquer:
-            diff = c.end_time - c.start_time
-            days, seconds = diff.days, diff.seconds
-            hours = days * 24 + seconds 
-            minutes = (seconds % 3600)
-            seconds = seconds % 60
-            tmpone = hours + (minutes / 60 + ((seconds / 60)/60))
+            if c.player.life < 0:
+                # if player is premium:
+                    # print("recovering body..")
+                    # c.player.life = 1
+                    # si el personaje ha muerto a las 3 horas de empezar 
+                    #la conquesta su cuerpo tardara 1:30 en recuperarse
+                # else:
+                c.player.life = 0
+                c.player_life = 0
 
-            # then get the diference between end and now time 
-            diff = c.end_time - datetime.now()
-            days, seconds = diff.days, diff.seconds
-            hours = days * 24 + seconds 
-            minutes = (seconds % 3600)
-            seconds = seconds % 60
-            tmptwo = hours + (minutes / 60 + ((seconds / 60)/60))
-
-            # calculate the porcenta between the two times
-            result = (tmptwo * 100 /(tmpone)) - 100
-
-            print('result =>', result)
-            print((( c.player.level *  c.player.power *  c.player.smart) / 3))
-            print(" c.zone.level => ", c.zone.level)
-            print(" c.zone.defense => ", c.zone.defense)
-            print(" c.zone.danger => ", c.zone.danger)
-            print((( c.zone.level *  c.zone.defense *  c.zone.danger) / 3))
+                if c.increment_zone_values:
+                    c.zone.food += 1
+                    c.increment_zone_values = False
+                    
+            else:
+                c.percentage_conquers = c.calculate_time_difference_percentage()
+                c.player.life = c.take_players_life()
+                c.player_life = c.player.life 
+                # c.in_battle = False
+                
 
     # @api.depends('start_time','player','zone')
     # def _calculate_end_time(self):
