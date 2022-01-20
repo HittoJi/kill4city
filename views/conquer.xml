@@ -64,11 +64,11 @@
                                                 <field name="percentage_conquers" widget="progressbar" />
                                             </td>
                                         </tr>
-                                        <tr>
+                                        <!-- <tr>
                                             <td>
                                                 <button name="increment" type="object" string="New name" class="oe_highlight" />
                                             </td>
-                                        </tr>
+                                        </tr> -->
                                     </table>
                                 </div>
                             </div>

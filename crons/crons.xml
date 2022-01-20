@@ -1,5 +1,5 @@
 <odoo>
-    <!-- <data>
+    <data>
         <record model="ir.cron" id="kill4city_cron_conquer_update">
             <field name="name">kill4city: Cron conquer Update</field>
             <field name="model_id" ref="model_kill4city_conquer" />
@@ -12,7 +12,7 @@
             <field name="activity_user_type">specific</field>
             <field name="doall" eval="False" />
         </record>
-    </data> -->
+    </data>
     <data>
         <record model="ir.cron" id="kill4city_cron_training_update">
             <field name="name">kill4city: Cron training Update</field>

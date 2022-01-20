@@ -23,7 +23,7 @@ class zone(models.Model):
                             # un 5% de zonas al nivel 100;
                             # => Mirar el nivel del jugador para crear zonas apartit de su nuvel
                             
-        return random.randint(0,100)
+        return random.randint(1,100)
     
 
 
@@ -256,11 +256,11 @@ class conquer(models.Model):
     percentage_conquers = fields.Float(default=0)
     player_life = fields.Float(default=0)
     player_life_at_start = fields.Float(default=0)
-    in_battle = fields.Boolean()
+    in_battle = fields.Boolean(default=True)
     player_win = fields.Boolean(default=False)
     player_life_cost = fields.Integer(default=0)
     increment_zone_values = fields.Boolean(default=True)
-    # player_is_p
+    player_is_rescue_mood = fields.Boolean(default=False)
 
     @api.model
     def create(self,values):
@@ -269,6 +269,7 @@ class conquer(models.Model):
         record.end_time = record._calculate_end_time()
         record.player_life = record.player.life
         record.player_life_at_start = record.player.life
+        record.player.occupied = True
         return record
 
     # @api.depends('start_time','player','zone')
@@ -288,8 +289,8 @@ class conquer(models.Model):
                     # print("conquer.player_life_cost => ",conquer.player_life_cost)
                 conquer.player_life_cost = ((((100*zone_calculate)/player_calculate)/3)*2.2)
 
-                print("time_end_calculate =>" , time_end_calculate)
-                print("math.log(z* (p*w),2) =>  " , math.log(zone_calculate * player_calculate,2))
+                # print("time_end_calculate =>" , time_end_calculate)
+                # print("math.log(z* (p*w),2) =>  " , math.log(zone_calculate * player_calculate,2))
                 # print("zone_calculate => ", zone_calculate)
                 # print("player_calculate => ", player_calculate)
                 # print("zone_calculate => ", zone_calculate)
@@ -321,24 +322,46 @@ class conquer(models.Model):
             life_cost_amount = ((c.player_life_cost*c.percentage_conquers)/100)
         return c.player_life_at_start - life_cost_amount
 
+    def player_loss_battle(self):
+        allConquer = self.search([])
+        for c in allConquer:
+            # if player is premium:
+                # print("recovering body..")
+                # c.player.life = 1
+                # si el personaje ha muerto a las 3 horas de empezar 
+                # la conquesta su cuerpo tardara 1:30 en recuperarse
+                # se llama a otro al cron de recuperacion
+                # player_is_rescue_mood = True
+            # else:
+            c.player.life = 0
+            c.player_life = 0
+            c.in_battle = False
+            if c.increment_zone_values: #Revisar if cuando hagas el premioum
+                c.zone.food += 1
+                c.increment_zone_values = False
+
+    @api.model
+    def update_conquer(self):
+        allConquer = self.search([('in_battle','=',True)])
+        for c in allConquer:
+            if c.player.life <= 0:
+                c.player_loss_battle()                
+            else:
+                c.percentage_conquers = c.calculate_time_difference_percentage()
+                c.zone.conquest = c.percentage_conquers
+                c.player.life = c.take_players_life()
+                c.player_life = c.player.life 
+                # c.in_battle = False
+            # reload page automatic not working :(
+            # action = self.env.ref('kill4city.action_conquer_window').read()[0]
+            # print("CRON UPDATE DONE ======")
+            # return action
 
     def increment(self):
         allConquer = self.search([])
         for c in allConquer:
-            if c.player.life < 0:
-                # if player is premium:
-                    # print("recovering body..")
-                    # c.player.life = 1
-                    # si el personaje ha muerto a las 3 horas de empezar 
-                    #la conquesta su cuerpo tardara 1:30 en recuperarse
-                # else:
-                c.player.life = 0
-                c.player_life = 0
-
-                if c.increment_zone_values:
-                    c.zone.food += 1
-                    c.increment_zone_values = False
-                    
+            if c.player.life <= 0:
+                c.player_loss_battle()                
             else:
                 c.percentage_conquers = c.calculate_time_difference_percentage()
                 c.player.life = c.take_players_life()
@@ -371,40 +394,7 @@ class conquer(models.Model):
 
 
 
-    # @api.model
-    # def update_conquer(self):
-    #     allConquer = self.search([('in_battle','=',True)])
-    #     # for c in allConquer:
-    #     #     diff = c.end_time - c.start_time
-    #     #     days, seconds = diff.days, diff.seconds
-    #     #     hours = days * 24 + seconds 
-    #     #     minutes = (seconds % 3600)
-    #     #     seconds = seconds % 60
-    #     #     tmpone = hours + (minutes / 60 + ((seconds / 60)/60))
 
-    #     #     # then get the diference between end and now time 
-    #     #     diff = c.end_time - datetime.now()
-    #     #     days, seconds = diff.days, diff.seconds
-    #     #     hours = days * 24 + seconds 
-    #     #     minutes = (seconds % 3600)
-    #     #     seconds = seconds % 60
-    #     #     tmptwo = hours + (minutes / 60 + ((seconds / 60)/60))
-
-    #     #     # calculate the porcenta between the two times
-    #     #     result = (tmptwo * 100 /(tmpone)) - 100
-
-    #     #     # Set the porcenta for procces bar 
-    #     #     c.zone.conquest = abs(result)
-    #     #     c.percentage_conquers = abs(result)
-
-    #     #     # player_life = c.player.life Aquiiiiiiiiiiii no vaaa buscate la vida
-    #     #     # Calculate player life damage
-    #     #     c.player.life -= c.percentage_conquers;
-    #     #     if c.zone.conquest >= 100:
-    #     #         c.zone.status = "released"
-    #     #     print("===CRON===")
-    #     #     c.in_battle = False
-    #     #     print(c.in_battle)
 
     # def increment(self):
     #     allConquer = self.search([('in_battle','=',True)])
