@@ -228,7 +228,7 @@ class player(models.Model):
     smart = fields.Float(default=_calculate_random_num)
     power = fields.Float(default=_calculate_random_num)
 
-    weapon = fields.Many2one("kill4city.weapon")
+    weapon = fields.Many2one("product.product")
     training = fields.Many2one("kill4city.training")
     in_city = fields.Many2one("kill4city.city",ondelete="set null")
     occupied = fields.Boolean(default=False)
@@ -236,13 +236,14 @@ class player(models.Model):
 
 
 class weapon(models.Model):
-    _name = 'kill4city.weapon'
-    _description = 'kill4city.weapon'
+    _name = 'product.product'
+    _inherit = 'product.product'
 
-    name = fields.Char()
+    # name = fields.Char()
     damage = fields.Integer()
-    photo = fields.Image(max_width=100, max_height=100)
+    # photo = fields.Image(max_width=100, max_height=100)
     use_by = fields.One2many("kill4city.player","weapon")
+    is_weapon = fields.Boolean(default=False)
 
 class conquer(models.Model):
     _name = 'kill4city.conquer'

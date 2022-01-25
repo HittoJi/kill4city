@@ -2,7 +2,7 @@
   <data>
 
     <!-- Weapon_____________________________________________________ -->
-    <record id="kill4city_demo_data_weapons" model="kill4city.weapon">
+    <record id="kill4city_demo_data_weapons" model="product.product">
       <field name="name">Carlos</field>
       <field name="damage">6</field>
     </record>

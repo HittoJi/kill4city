@@ -126,8 +126,8 @@ class player(models.Model):
 
 
 class weapon(models.Model):
-    _name = 'kill4city.weapon'
-    _description = 'kill4city.weapon'
+    _name = 'product.product'
+    _description = 'product.product'
 
     name = fields.Char()
     damage = fields.Integer()

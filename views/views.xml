@@ -28,9 +28,13 @@
 
     <record model="ir.actions.act_window" id="kill4city.action_weapon_window">
       <field name="name">Weapons</field> <!-- name on top  -->
-      <field name="res_model">kill4city.weapon</field>
+      <field name="res_model">product.product</field>
       <!-- <field name="view_mode">tree,form</field> -->
       <field name="view_mode">tree,kanban,form</field>
+      <field name="domain"> [('is_weapon','=',True)]</field>
+      <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('kill4city.weapon_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('kill4city.weapon_partner_form')}),]" />
     </record>
 
     <record model="ir.actions.act_window" id="kill4city.action_training_window">
@@ -40,6 +44,9 @@
       <!-- <field name="context">{'training_in_process': True, 'search_default_player_partner': 1}</field> -->
       <field name="view_mode">kanban,tree,form</field>
     </record>
+
+
+    <!-- Acciones para forzar la vista (herencia) -->
 
     <!-- server action to the one above -->
 
