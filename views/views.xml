@@ -22,8 +22,12 @@
 
     <record model="ir.actions.act_window" id="kill4city.action_player_window">
       <field name="name">Player</field> <!-- name on top  -->
-      <field name="res_model">kill4city.player</field>
+      <field name="res_model">res.partner</field>
       <field name="view_mode">kanban,tree,form</field>
+      <field name="domain"> [('is_plater','=',True)]</field>
+      <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('kill4city.player_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('kill4city.player_form')}),]" />
     </record>
 
     <record model="ir.actions.act_window" id="kill4city.action_weapon_window">

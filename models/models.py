@@ -113,7 +113,7 @@ class city(models.Model):
 
     zone = fields.One2many("kill4city.zone","city")
     max_players = fields.Integer(compute="_get_zones")  #get quantity of zones and divide by 2 to set the total amout of player can acces to the city
-    players_in = fields.One2many("kill4city.player","in_city")
+    players_in = fields.One2many("res.partner","in_city")
 
     
     @api.model
@@ -133,7 +133,7 @@ class training(models.Model):
     _name = 'kill4city.training'
     _description = 'kill4city.training'
 
-    player = fields.Many2one("kill4city.player", required = True, ondelete='cascade')
+    player = fields.Many2one("res.partner", required = True, ondelete='cascade')
     training_type = fields.Selection([('brain', 'Brain'),('power','Power')] , required = True)
     start_time = fields.Datetime(readonly=True)
     end_time = fields.Datetime(readonly=True)
@@ -212,8 +212,9 @@ class training(models.Model):
 
 
 class player(models.Model):
-    _name = 'kill4city.player'
-    _description = 'kill4city.player'
+    _name = 'res.partner'
+    _inherit = 'res.partner'
+    # _description = 'res.partner'
 
     def _generate_player_name(self):
         ranName = ["Isabel Saldaña","Mariam Contador","Noemi Monte","Vanessa Villalobos","Nerea Racionero","Uxia Barbero","Fatima Marinero","Nora Balderas","Ana Isabel Sallent","Ainoa Carpentier","Angel Hernández","Iago Jurado","Jose Maria Valderas","Alonso Panadero","Matias Villalba","Isaac Alcaide","Kevin Rabellino","Francisco Padrón","Jordi Val","Salvador Balderas","Gerard Morterero","Miguel Mallén","Alonso del Valle","Pol Domínguez","Jon Ferrero","Ramon Fuster o Fusté","Oliver Hernández","Sergi Bielsa","Rodrigo Enríquez","Pau Ascaso","Mar Valverde","Gabriela Santolaria","Patricia Ordóñez","Judith Siurana","Judit Villalobos","Mireya Pajarero","Clara Racionero","Carmen Maria Molinero","Zaira Martín","Neus Peña"]
@@ -222,7 +223,7 @@ class player(models.Model):
     def _calculate_random_num(salf):
         return random.randint(3,30)
 
-    name = fields.Char(default=_generate_player_name)
+    # name = fields.Char(default=_generate_player_name)
     level = fields.Integer(default=1)
     life = fields.Float(default=100)
     smart = fields.Float(default=_calculate_random_num)
@@ -233,6 +234,7 @@ class player(models.Model):
     in_city = fields.Many2one("kill4city.city",ondelete="set null")
     occupied = fields.Boolean(default=False)
     in_battle = fields.Boolean(default=False)
+    is_plater = fields.Boolean(default=True)
 
 
 class weapon(models.Model):
@@ -242,7 +244,7 @@ class weapon(models.Model):
     # name = fields.Char()
     damage = fields.Integer()
     # photo = fields.Image(max_width=100, max_height=100)
-    use_by = fields.One2many("kill4city.player","weapon")
+    use_by = fields.One2many("res.partner","weapon")
     is_weapon = fields.Boolean(default=True)
 
 class conquer(models.Model):
@@ -250,7 +252,7 @@ class conquer(models.Model):
     _description = 'kill4city.conquer'
 
     zone = fields.Many2one("kill4city.zone", required = True, ondelete='cascade')
-    player = fields.Many2one("kill4city.player", required = True, ondelete='cascade')
+    player = fields.Many2one("res.partner", required = True, ondelete='cascade')
     start_time = fields.Datetime(readonly=True)
     end_time = fields.Datetime(readonly=True)
     # end_time = fields.Datetime(compute='_calculate_end_time')

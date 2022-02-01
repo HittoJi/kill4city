@@ -8,7 +8,7 @@
                     <field name="name" />
                     <field name="damage" />
                     <field name="use_by" />
-                    <field name="is_weapon"/>
+                    <field name="is_weapon" />
                 </tree>
             </field>
         </record>
@@ -38,7 +38,9 @@
                     <field name="damage" />
                     <templates>
                         <t t-name="kanban-box"></t>
-                        <h2><field name="name" /></h2>
+                        <h2>
+                            <field name="name" />
+                        </h2>
                     </templates>
                 </kanban>
             </field>
@@ -49,7 +51,7 @@
         <record model="ir.ui.view" id="kill4city.weapon_partner_list">
             <field name="name">Kill4city Player list</field>
             <field name="model">product.product</field>
-            <field name="inherit_id" ref="product.product_product_tree_view" />
+            <field name="inherit_id" ref="product.product_template_tree_view" />
             <field name="arch" type="xml">
                 <field name="name" position="after">
                     <!-- <field name="photo" widget="image" class="imgWeaponList"></field> -->
@@ -63,16 +65,27 @@
         <record model="ir.ui.view" id="kill4city.weapon_partner_form">
             <field name="name">Kill4city Player form</field>
             <field name="model">product.product</field>
-            <field name="inherit_id" ref="product.product_normal_form_view" />
+            <field name="inherit_id" ref="product.product_template_form_view" />
             <field name="arch" type="xml">
-                <field name="default_code" position="after">
-                    <!-- <field name="name" /> -->
-                    <field name="image_1920" />
-                    <field name="damage" />
-                    <field name="use_by" />
-                    <field name="is_weapon" />
-                </field>
+                <notebook position="inside">
+                    <page string="Kill4City">
+                        <group>
+                            <field name="damage" />
+                            <field name="use_by" />
+                            <field name="is_weapon" />
+                        </group>
+                    </page>
+                </notebook>
             </field>
         </record>
     </data>
 </odoo>
+<!-- <notebook position="inside">
+    <page string="Kill4City">
+        <group>
+            <field name="damage" />
+            <field name="use_by" />
+            <field name="is_weapon" />
+        </group>
+    </page>
+</notebook> -->
