@@ -34,7 +34,7 @@
       <field name="domain"> [('is_weapon','=',True)]</field>
       <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'tree', 'view_id': ref('kill4city.weapon_list')}),
-            (0, 0, {'view_mode': 'form', 'view_id': ref('kill4city.weapon_partner_form')}),]" />
+            (0, 0, {'view_mode': 'form', 'view_id': ref('kill4city.weapon_form')}),]" />
     </record>
 
     <record model="ir.actions.act_window" id="kill4city.action_training_window">

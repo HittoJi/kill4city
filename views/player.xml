@@ -26,7 +26,7 @@
                             <field name="level" />
                             <field name="life" />
                             <field name="level" />
-                            <field name="weapon" />
+                            <field name="weapon" domain="[('is_weapon', '=', True)]"/>
                             <field name="in_city" />
                             <field name="occupied" />
                         </group>
@@ -35,9 +35,7 @@
             </field>
         </record>
         <record model="ir.ui.view" id="kill4city.player_kanban">
-            <field name="name">Kill4city player kanb
-                
-                an</field>
+            <field name="name">Kill4city player kanban</field>
             <field name="model">kill4city.player</field>
             <field name="arch" type="xml">
                 <kanban>

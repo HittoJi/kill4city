@@ -243,7 +243,7 @@ class weapon(models.Model):
     damage = fields.Integer()
     # photo = fields.Image(max_width=100, max_height=100)
     use_by = fields.One2many("kill4city.player","weapon")
-    is_weapon = fields.Boolean(default=False)
+    is_weapon = fields.Boolean(default=True)
 
 class conquer(models.Model):
     _name = 'kill4city.conquer'

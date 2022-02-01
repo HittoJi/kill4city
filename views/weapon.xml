@@ -22,6 +22,7 @@
                         <group>
                             <field name="name" />
                             <field name="damage" />
+                            <!-- <field name="is_weapon"/> -->
                         </group>
                     </sheet>
                 </form>
