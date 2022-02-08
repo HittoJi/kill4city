@@ -26,10 +26,10 @@
     'data': [
         'security/ir.model.access.csv',
         'views/city.xml',
+        'views/conquer.xml',
         'views/zone.xml',
         'views/player.xml',
         'views/weapon.xml',
-        'views/conquer.xml',
         'views/training.xml',
         'views/views.xml',
         'views/templates.xml',

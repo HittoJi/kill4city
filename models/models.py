@@ -339,6 +339,7 @@ class conquer(models.Model):
             c.player.life = 0
             c.player_life = 0
             c.in_battle = False
+            c.player.occupied = False
             if c.increment_zone_values: #Revisar if cuando hagas el premioum
                 c.zone.food += 1
                 c.increment_zone_values = False
@@ -357,7 +358,7 @@ class conquer(models.Model):
                 # c.in_battle = False
             # reload page automatic not working :(
             # action = self.env.ref('kill4city.action_conquer_window').read()[0]
-            # print("CRON UPDATE DONE ======")
+            print("CRON UPDATE DONE ======")
             # return action
 
     def increment(self):
@@ -370,94 +371,78 @@ class conquer(models.Model):
                 c.player.life = c.take_players_life()
                 c.player_life = c.player.life 
                 # c.in_battle = False
+
+class conquer_wizard(models.TransientModel):
+    _name = 'kill4city.conquer_wizard'
+    _description = 'Wizard of conquer'
+
+    def _get_zone(self):
+        city = self.env.context.get('zone_context')
+        return city
+
+    state = fields.Selection([('select_zone','Zone'),('select_player','Player'),('select_info','Info')], default = 'select_zone')
+
+    zone = fields.Many2one("kill4city.zone", default = _get_zone)
+    player = fields.Many2one("res.partner", ondelete='cascade')
+    start_time = fields.Datetime(default=fields.Datetime.to_string(datetime.now()),readonly=True)
+    end_time = fields.Datetime(compute="_calculate_end_time",readonly=True)
+
+
+
+    @api.depends('start_time','player','zone')
+    def _calculate_end_time(self):
+            for conquer in self:
+                print("len =>>>>>>",len(conquer.player)) #aqui
                 
 
-    # @api.depends('start_time','player','zone')
-    # def _calculate_end_time(self):
-    #     for conq in self:
-    #         if p != 0 and z != 0:
-    #             conq.player_life = conq.player.life
-    #         print("You just set the time")
-
-    # @api.model
-    # def create(self,values):
-    #     record = super(conquer, self).create(values)
-    #     if record.start_time != "":    
-    #         record.start_time = fields.Datetime.to_string(datetime.now())
-    #         # Calculate end time
-    #         p = record.player.level
-    #         w = record.player.weapon.damage
-    #         z = record.zone.level
-    #         time_end_calculate = math.log(z* (p*w),2)
-    #         record.end_time = fields.Datetime.to_string(fields.Datetime.from_string(fields.datetime.now()) + timedelta(hours=time_end_calculate))
-    #         record.player_life = record.player.life
-    #         record.in_battle = True
-
-    #     return record
+    def done(self):
+        conquer = self.env['kill4city.conquer'].create({
+            'zone': self.zone.id,
+            'player': self.player.id
+        })
+        return {
+            'name': 'kill4city conquer',
+            'type': 'ir.actions.act_window',
+            'res_model': 'kill4city.conquer',
+            'res_id': conquer.id,
+            'view_mode': 'form',
+            'target': 'current'
+        }
+        print("fuc Done")
 
 
 
+    def next(self):
+        state = self.state
+        if state == 'select_zone':
+            self.state = 'select_player'
+        elif state == 'select_player':
+            self.state = 'select_info'
+
+        return {
+            'name': 'Negocity travel wizard action',
+            'type': 'ir.actions.act_window',
+            'res_model': self._name,
+            'res_id': self.id,
+            'view_mode': 'form',
+            'target': 'new',
+            'context': self._context
+        } 
+
+    def previous(self):
+        state = self.state
+        if state == 'select_info':
+            self.state = 'select_player'
+        elif state == 'select_player':
+            self.state = 'select_zone'
 
 
-    # def increment(self):
-    #     allConquer = self.search([('in_battle','=',True)])
-    #     for c in allConquer:
-    #         diff = c.end_time - c.start_time
-    #         days, seconds = diff.days, diff.seconds
-    #         hours = days * 24 + seconds 
-    #         minutes = (seconds % 3600)
-    #         seconds = seconds % 60
-    #         tmpone = hours + (minutes / 60 + ((seconds / 60)/60))
-
-    #         # get the diference between start and end time
-    #         diff = c.end_time - datetime.now()
-    #         days, seconds = diff.days, diff.seconds
-    #         hours = days * 24 + seconds 
-    #         minutes = (seconds % 3600)
-    #         seconds = seconds % 60
-    #         tmptwo = hours + (minutes / 60 + ((seconds / 60)/60))
-
-    #         # calculate the porcenta between the two times
-    #         result = (tmptwo * 100 /(tmpone)) - 100
-
-    #         # Set the porcenta for procces bar 
-    #         c.zone.conquest = abs(result)
-    #         c.percentage_conquers = abs(result)
-
-    #         # Calculate player life damage (danger = Zone - player life)
-            
-
-    #         c.player.life -= c.zone.level - c.player.level
-    #         c.player_life = c.player.life
-
-    #         # Calculate zone damage by the player
-
-    #         # if the player is dead
-    #         if c.player.life <= 0:
-    #             c.player.life = 0
-    #             c.player_life = 0
-    #             c.in_battle = False
-
-
-    
-
-            
-                
-    #  for conq in self:
-    #         p = conq.player.level
-    #         w = conq.player.weapon.damage
-    #         z = conq.zone.level
-    #         # if conq.record.start_time == "":    
-    #         #     conq.start_time = fields.Datetime.to_string(datetime.now())
-    #             # fix the time start*--------------------
-    #         if p != 0 and z != 0:
-    #             time_end_calculate = math.log(z* (p*w),2)
-    #             conq.end_time = fields.Datetime.to_string(fields.Datetime.from_string(fields.datetime.now()) + timedelta(hours=time_end_calculate))
-    #             # conq.start_time = fields.Datetime.to_string(datetime.now())
-    #             conq.player_life = conq.player.life
-    #             conq.player.in_battle = True
-    #             conq.in_battle = True
-    #             print("You just set the time")
-    #         else:
-    #             conq.end_time = fields.Datetime.to_string(datetime.now())
-    #             # conq.zone.status = False
+        return {
+        'name': 'Negocity travel wizard action',
+        'type': 'ir.actions.act_window',
+        'res_model': self._name,
+        'res_id': self.id,
+        'view_mode': 'form',
+        'target': 'new',
+        'context': self._context
+        }

@@ -114,7 +114,6 @@
                             <field name="name" />
                             <field name="level" />
                             <field name="life" />
-                            <field name="level" />
                         </group>
                     </page>
                 </notebook>

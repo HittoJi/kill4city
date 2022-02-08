@@ -78,6 +78,7 @@
             </field>
         </record>
 
+
         <record model="ir.ui.view" id="kill4city.conquer_form">
             <field name="name">kill4city Conquer Form</field>
             <field name="model">kill4city.conquer</field>
@@ -86,7 +87,7 @@
                     <sheet>
                         <group>
                             <field name="zone" />
-                            <field name="player" domain="[('occupied', '=', False)]"/>
+                            <field name="player" domain="[('occupied', '=', False),('is_plater', '=', True)]" />
                             <field name="start_time" />
                             <field name="end_time" />
                         </group>
@@ -94,5 +95,43 @@
                 </form>
             </field>
         </record>
+
+        <record model="ir.actions.act_window" id="kill4city.conquer_wizard_action">
+            <field name="name">Lets create a conquer</field>
+            <field name="res_model">kill4city.conquer_wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.ui.view" id="kill4city.conquer_wizard_form">
+            <field name="name">negocity travel Form</field>
+            <field name="model">kill4city.conquer_wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <field name="state" widget="statusbar"></field>
+                    </header>
+                    <sheet>
+                        <group states="select_zone">
+                            <field name="zone" />
+                        </group>
+                        <group states="select_player">
+                            <field name="player" domain="[('occupied', '=', False),('is_plater', '=', True)]" />
+                        </group>
+                        <group states="select_info">
+                            <field name="start_time" />
+                            <field name="end_time" />
+                        </group>
+                        <footer>
+                            <button name="previous" type="object" string="Previous" class="oe_highlight" states="select_player,select_info" />
+                            <button name="next" type="object" string="Next" class="oe_highlight" states="select_zone,select_player" />
+                            <button name="done" type="object" string="Done" class="oe_highlight" states="select_info" />
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
     </data>
 </odoo>

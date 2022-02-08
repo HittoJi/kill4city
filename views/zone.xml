@@ -13,7 +13,9 @@
                     <field name="conquest" widget="progressbar" />
                     <field name="status" />
                     <!-- <button name="repair" type="object" string="Repair" class="oe_highlight" /> -->
-                    <button name="zone" string="zone" class="oe_highlight" />
+                    <!-- <button name="zone" string="zone" class="oe_highlight" /> -->
+                    <button name="%(kill4city.conquer_wizard_action)d" type="action" string="Launch attack" class="oe_highlight" 
+                        context="{'zone_context': active_id}" />
                 </tree>
             </field>
         </record>
@@ -27,7 +29,7 @@
                             <field name="name" />
                             <field name="level" />
                             <field name="food" />
-                            <button name="new_name" type="object" string="New name" class="oe_highlight"/>
+                            <button name="new_name" type="object" string="New name" class="oe_highlight" />
                         </group>
                     </sheet>
                 </form>
