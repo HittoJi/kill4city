@@ -23,7 +23,7 @@
                 <form>
                     <sheet>
                         <group>
-                            <field name="player" domain="[('occupied', '=', False)]"/>
+                            <field name="player"  domain="[('occupied', '=', False),('is_plater', '=', True)]"  />
                             <field name="training_type" />
                             <field name="start_time" />
                             <field name="end_time" />
@@ -85,7 +85,7 @@
                                                 <td colspan="2">
                                                     <div class="button-container-1">
                                                         <span class="mas">Cancel training</span>
-                                                        <button id='work' type="object" name="cancel_training" >Cancel training</button>
+                                                        <button id='work' type="object" name="cancel_training">Cancel training</button>
                                                     </div>
                                                     <!-- <button name="cancel_training" type="object" class="cancel_training"/> -->
                                                 </td>
@@ -110,5 +110,33 @@
             </field>
         </record>
 
+
+        <record model="ir.actions.act_window" id="kill4city.training_wizard_action">
+            <field name="name">Lets create a training</field>
+            <field name="res_model">kill4city.training_wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.ui.view" id="kill4city.training_wizard_form">
+            <field name="name">negocity travel Form</field>
+            <field name="model">kill4city.training_wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <field name="state" widget="statusbar"></field>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="player" domain="[('occupied', '=', False),('is_plater', '=', True)]" />
+                            <field name="training_type" />
+                        </group>
+                        <footer>
+                            <button name="done" type="object" string="Done" class="oe_highlight" />
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
     </data>
 </odoo>

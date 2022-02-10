@@ -4,7 +4,7 @@
             <field name="name">kill4city Zone list</field>
             <field name="model">kill4city.zone</field>
             <field name="arch" type="xml">
-                <tree decoration-danger="level>70">
+                <tree decoration-danger="level>60">
                     <field name="name" />
                     <field name="level" />
                     <field name="food" />
@@ -16,7 +16,7 @@
                     <!-- <button name="repair" type="object" string="Repair" class="oe_highlight" /> -->
                     <!-- <button name="zone" string="zone" class="oe_highlight" /> -->
                     <button name="%(kill4city.conquer_wizard_action)d" type="action" string="Launch attack" class="oe_highlight" 
-                        context="{'zone_context': active_id}" attrs="{'invisible':[('in_battle','=',True)]}"/>
+                        context="{'player_context': parent.id, 'zone_context': active_id}" attrs="{'invisible':[('in_battle','=',True)]}"/>
                 </tree>
             </field>
         </record>

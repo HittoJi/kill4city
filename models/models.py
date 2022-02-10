@@ -234,7 +234,10 @@ class player(models.Model):
     in_battle = fields.Boolean(default=False)
     is_plater = fields.Boolean(default=True)
     coins = fields.Integer(default=0)
-    zone = fields.One2many(related='in_city.zone')
+    zone_list = fields.One2many(related='in_city.zone')
+    training_type = fields.Many2one(related='training')
+    training_start_time = fields.Datetime(related='training.start_time')
+    training_end_time = fields.Datetime(related='training.end_time')
 
     
 
@@ -391,18 +394,57 @@ class conquer(models.Model):
                 c.player_life = c.player.life 
                 # c.in_battle = False
 
+class training_wizard(models.TransientModel):
+    _name = 'kill4city.training_wizard'
+    _description = 'Wizard of training'
+
+    state = fields.Selection([('select_player_2','Player'),('select_training','Training'),('select_info','Info')], default = 'select_zone')
+
+
+    def _get_player(self):
+        player = self.env.context.get('player_context')
+        print("Platter id==" ,player)
+        return player
+
+    player = fields.Many2one("res.partner", ondelete='cascade',default = _get_player)
+    training_type = fields.Selection([('brain', 'Brain'),('power','Power')] , required = True)
+
+
+    # end_time = fields.Datetime(readonly=True)
+
+    def done(self):
+        conquer = self.env['kill4city.training'].create({
+            'training_type': self.training_type.id,
+            'player': self.player.id
+        })
+        return {
+            'name': 'kill4city conquer',
+            'type': 'ir.actions.act_window',
+            'res_model': 'kill4city.training',
+            'res_id': conquer.id,
+            'view_mode': 'form',
+            'target': 'current'
+        }
+
+
+
 class conquer_wizard(models.TransientModel):
     _name = 'kill4city.conquer_wizard'
     _description = 'Wizard of conquer'
 
     def _get_zone(self):
-        city = self.env.context.get('zone_context')
-        return city
+        zone = self.env.context.get('zone_context')
+        return zone
+
+    def _get_player(self):
+        player = self.env.context.get('player_context')
+        print("Platter id==" ,player)
+        return player
 
     state = fields.Selection([('select_zone','Zone'),('select_player','Player'),('select_info','Info')], default = 'select_zone')
 
     zone = fields.Many2one("kill4city.zone", default = _get_zone)
-    player = fields.Many2one("res.partner", ondelete='cascade')
+    player = fields.Many2one("res.partner", ondelete='cascade',default = _get_player)
     start_time = fields.Datetime(default=fields.Datetime.to_string(datetime.now()),readonly=True)
     end_time = fields.Datetime(readonly=True)
     player_life_cost = fields.Integer(default=0)
