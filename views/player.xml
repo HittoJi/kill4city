@@ -33,7 +33,17 @@
                             <field name="occupied" />
                             <!-- <field name="is_plater" /> -->
                         </group>
-                        <!-- <notebook>
+                        <notebook>
+                            <page string="City">
+                                <group>
+                                    <field name="in_city" />
+                                </group>
+                            </page>
+                            <page string="Zones">
+                                <group>
+                                    <field name="zone" domain="[('status', '=', True)]"/>
+                                </group>
+                            </page>
                             <page string="Weapon">
                                 <group>
                                     <field name="weapon" domain="[('is_weapon', '=', True)]" />
@@ -44,12 +54,7 @@
                                     <field name="training" />
                                 </group>
                             </page>
-                            <page string="City">
-                                <group>
-                                    <field name="in_city" />
-                                </group>
-                            </page>
-                        </notebook> -->
+                        </notebook>
                     </sheet>
                 </form>
             </field>

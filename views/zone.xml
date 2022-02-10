@@ -12,10 +12,11 @@
                     <field name="danger" />
                     <field name="conquest" widget="progressbar" />
                     <field name="status" />
+                    <field name="in_battle" invisible="1" />
                     <!-- <button name="repair" type="object" string="Repair" class="oe_highlight" /> -->
                     <!-- <button name="zone" string="zone" class="oe_highlight" /> -->
                     <button name="%(kill4city.conquer_wizard_action)d" type="action" string="Launch attack" class="oe_highlight" 
-                        context="{'zone_context': active_id}" />
+                        context="{'zone_context': active_id}" attrs="{'invisible':[('in_battle','=',True)]}"/>
                 </tree>
             </field>
         </record>

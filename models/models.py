@@ -31,6 +31,7 @@ class zone(models.Model):
 
     defense = fields.Integer(default=0)
     danger = fields.Integer(default=0)
+    in_battle = fields.Boolean(default=False)
 
 
     
@@ -61,7 +62,7 @@ class zone(models.Model):
 
     name = fields.Char(default=_generate_town_name)
     conquest = fields.Float()
-    status = fields.Char(default="Invaded")
+    status = fields.Boolean(default=False)
                 
     def new_name(self):
         towns = ["Oscoz","Torrelara","Coscullano","Cicera","Haedillo","Eustaquios","Navarredondilla","Elda","Garayolza","Marne","Santiorjo","Delfiá","Malá","Noia","Puertas","Sardas","Felechosas","Bujursot","Betolaza","Batiao","Berzosa","Rigueira","Guaso","Bode","Logrosa","Vilamitjana","Cogela","Royo","Solmayor","Daneiro","Fornes","Medal","Infesta","Ludrio","Torregorda","Cereijido","Sanjurjo","Corres","Espasantes","Igea","Pierres","Carabias","Concha","Torleque","Viella","Arro","Cegama","Jubia","Torquiendo","Loja"]
@@ -206,10 +207,7 @@ class training(models.Model):
         return action
         # return {'type': 'ir.actions.client','tag': 'reload',}
 
-            
-                
-
-
+          
 
 class player(models.Model):
     _name = 'res.partner'
@@ -236,6 +234,9 @@ class player(models.Model):
     in_battle = fields.Boolean(default=False)
     is_plater = fields.Boolean(default=True)
     coins = fields.Integer(default=0)
+    zone = fields.One2many(related='in_city.zone')
+
+    
 
 
 class weapon(models.Model):
@@ -274,6 +275,7 @@ class conquer(models.Model):
         record.player_life = record.player.life
         record.player_life_at_start = record.player.life
         record.player.occupied = True
+        record.zone.in_battle = True
         return record
 
     # @api.depends('start_time','player','zone')
@@ -342,6 +344,7 @@ class conquer(models.Model):
             c.player_life = 0
             c.in_battle = False
             c.player.occupied = False
+            c.zone.in_battle = False
             if c.increment_zone_values: #Revisar if cuando hagas el premioum
                 c.zone.food += 1
                 c.increment_zone_values = False
@@ -354,7 +357,7 @@ class conquer(models.Model):
             c.player.occupied = False
             c.zone.conquest = 100
             c.percentage_conquers = 100
-            c.zone.status = "Released"
+            c.zone.status = True
             # c.player.coins
 
     @api.model
