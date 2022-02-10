@@ -16,6 +16,7 @@
                 </tree>
             </field>
         </record>
+
         <record model="ir.ui.view" id="kill4city.player_form">
             <field name="name">kill4city player Form</field>
             <field name="model">res.partner</field>
@@ -32,10 +33,28 @@
                             <field name="occupied" />
                             <!-- <field name="is_plater" /> -->
                         </group>
+                        <!-- <notebook>
+                            <page string="Weapon">
+                                <group>
+                                    <field name="weapon" domain="[('is_weapon', '=', True)]" />
+                                </group>
+                            </page>
+                            <page string="Training">
+                                <group>
+                                    <field name="training" />
+                                </group>
+                            </page>
+                            <page string="City">
+                                <group>
+                                    <field name="in_city" />
+                                </group>
+                            </page>
+                        </notebook> -->
                     </sheet>
                 </form>
             </field>
         </record>
+
         <record model="ir.ui.view" id="kill4city.player_kanban">
             <field name="name">Kill4city player kanban</field>
             <field name="model">res.partner</field>

@@ -4,7 +4,7 @@
             <field name="name">kill4city City list</field>
             <field name="model">kill4city.city</field>
             <field name="arch" type="xml">
-                <tree decoration-info="players_in>2">
+                <tree decoration-info="players_in > 2">
                     <field name="name" />
                     <field name="zones" />
                     <field name="max_players" />
@@ -59,7 +59,9 @@
                             <div t-attf-class="oe_kanban_card o_kanban_record_has_image_fill ">
                                 <div class="oe_kanban_details d-flex flex-column">
                                     <a type="open">
-                                        <h2><field name="name" /></h2>
+                                        <h2>
+                                            <field name="name" />
+                                        </h2>
                                         <h4>
                                             Zones:
                                             <field name="zones" />
@@ -72,11 +74,9 @@
                                             Capacity:
                                             <field name="max_players" />
                                         </h3>
-
                                     </a>
                                 </div>
                             </div>
-                            <p></p>
                         </t>
                     </templates>
                 </kanban>

@@ -235,6 +235,7 @@ class player(models.Model):
     occupied = fields.Boolean(default=False)
     in_battle = fields.Boolean(default=False)
     is_plater = fields.Boolean(default=True)
+    coins = fields.Integer(default=0)
 
 
 class weapon(models.Model):
@@ -286,7 +287,8 @@ class conquer(models.Model):
                 zone_calculate = abs(((conquer.zone.level * conquer.zone.defense * conquer.zone.danger) / 3))
                 # ... ... ... 
                 # time_end_calculate = abs(zone_calculate - player_calculate)
-                time_end_calculate = math.log(zone_calculate * player_calculate,2)
+                # time_end_calculate = math.log(zone_calculate * player_calculate,2)
+                time_end_calculate = 0.1
                 if player_calculate > zone_calculate:
                     conquer.player_win = True
                     # print("conquer.player_life_cost => ",conquer.player_life_cost)
@@ -344,6 +346,17 @@ class conquer(models.Model):
                 c.zone.food += 1
                 c.increment_zone_values = False
 
+    def player_win_battle(self):
+        allConquer = self.search([])
+        for c in allConquer:
+            print("Player has win")
+            c.in_battle = False
+            c.player.occupied = False
+            c.zone.conquest = 100
+            c.percentage_conquers = 100
+            c.zone.status = "Released"
+            # c.player.coins
+
     @api.model
     def update_conquer(self):
         allConquer = self.search([('in_battle','=',True)])
@@ -354,7 +367,10 @@ class conquer(models.Model):
                 c.percentage_conquers = c.calculate_time_difference_percentage()
                 c.zone.conquest = c.percentage_conquers
                 c.player.life = c.take_players_life()
-                c.player_life = c.player.life 
+                c.player_life = c.player.life
+            if c.zone.conquest >= 100:
+                c.player_win_battle()
+                
                 # c.in_battle = False
             # reload page automatic not working :(
             # action = self.env.ref('kill4city.action_conquer_window').read()[0]
@@ -385,15 +401,35 @@ class conquer_wizard(models.TransientModel):
     zone = fields.Many2one("kill4city.zone", default = _get_zone)
     player = fields.Many2one("res.partner", ondelete='cascade')
     start_time = fields.Datetime(default=fields.Datetime.to_string(datetime.now()),readonly=True)
-    end_time = fields.Datetime(compute="_calculate_end_time",readonly=True)
+    end_time = fields.Datetime(readonly=True)
+    player_life_cost = fields.Integer(default=0)
+    player_win = fields.Boolean(default=False)
 
 
 
-    @api.depends('start_time','player','zone')
     def _calculate_end_time(self):
             for conquer in self:
                 print("len =>>>>>>",len(conquer.player)) #aqui
-                
+                if len(conquer.player) != 0:
+                    print("Hay player")
+                    # Calculate how dangers is the player 
+                    player_calculate = ((conquer.player.level * conquer.player.power * conquer.player.smart) / 3)
+                    if conquer.player.weapon.damage != 0: # if is == 0 the player has no weapon
+                        player_calculate = player_calculate + ((player_calculate * conquer.player.weapon.damage) / 100)
+                    # Calculate how dangers is the zone for the player
+                    zone_calculate = abs(((conquer.zone.level * conquer.zone.defense * conquer.zone.danger) / 3))
+                    # ... ... ... 
+                    # time_end_calculate = abs(zone_calculate - player_calculate)
+                    # time_end_calculate = math.log(zone_calculate * player_calculate,2)
+                    time_end_calculate = 0.1
+
+                    if player_calculate > zone_calculate:
+                        conquer.player_win = True
+                        # print("conquer.player_life_cost => ",conquer.player_life_cost)
+                    conquer.player_life_cost = ((((100*zone_calculate)/player_calculate)/3)*2.2)
+                    print("end_time => ",conquer.end_time)
+                    conquer.end_time = fields.Datetime.to_string(fields.Datetime.from_string(conquer.start_time) + timedelta(hours=time_end_calculate))
+                    return fields.Datetime.to_string(fields.Datetime.from_string(conquer.start_time) + timedelta(hours=time_end_calculate))
 
     def done(self):
         conquer = self.env['kill4city.conquer'].create({
@@ -418,6 +454,7 @@ class conquer_wizard(models.TransientModel):
             self.state = 'select_player'
         elif state == 'select_player':
             self.state = 'select_info'
+            self._calculate_end_time()
 
         return {
             'name': 'Negocity travel wizard action',

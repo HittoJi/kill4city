@@ -8,7 +8,6 @@
                     <field name="name" />
                     <field name="damage" />
                     <field name="use_by" />
-                    <!-- <field name="is_weapon" /> -->
                 </tree>
             </field>
         </record>
