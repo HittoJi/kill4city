@@ -5,3 +5,4 @@ access_kill4city_,kill4city.conquer,model_kill4city_conquer,base.group_user,1,1,
 access_kill4city_training,kill4city.training,model_kill4city_training,base.group_user,1,1,1,1
 access_kill4city_conquer_wizard,kill4city.conquer_wizard,model_kill4city_conquer_wizard,base.group_user,1,1,1,1
 access_kill4city_training_wizard,kill4city.training_wizard,model_kill4city_training_wizard,base.group_user,1,1,1,1
+access_kill4city_buy_weapon_wizard,kill4city.buy_weapon_wizard,model_kill4city_buy_weapon_wizard,base.group_user,1,1,1,1

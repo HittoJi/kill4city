@@ -135,7 +135,7 @@ class training(models.Model):
     _description = 'kill4city.training'
 
     player = fields.Many2one("res.partner", required = True, ondelete='cascade')
-    training_type = fields.Selection([('brain', 'Brain'),('power','Power')] , required = True)
+    training_type = fields.Selection([('brain', 'Brain'),('power','Power')], required = True)
     start_time = fields.Datetime(readonly=True)
     end_time = fields.Datetime(readonly=True)
     training_in_process = fields.Boolean(default=False)
@@ -228,16 +228,24 @@ class player(models.Model):
     power = fields.Float(default=_calculate_random_num)
 
     weapon = fields.Many2one("product.product")
+    weapons_list = fields.Many2many("product.product")
+
     training = fields.Many2one("kill4city.training")
     in_city = fields.Many2one("kill4city.city",ondelete="set null")
     occupied = fields.Boolean(default=False)
     in_battle = fields.Boolean(default=False)
     is_plater = fields.Boolean(default=True)
-    coins = fields.Integer(default=0)
+    coins = fields.Float(default=0)
     zone_list = fields.One2many(related='in_city.zone')
-    training_type = fields.Many2one(related='training')
-    training_start_time = fields.Datetime(related='training.start_time')
-    training_end_time = fields.Datetime(related='training.end_time')
+    # training_type = fields.Selection(related='training_type')
+    # training_start_time = fields.Datetime(related='training.start_time')
+    # training_end_time = fields.Datetime(related='training.end_time')
+    current_training = fields.Many2many("kill4city.training",compute='_get_current_training')
+
+    def _get_current_training(self):
+        all_trainings = self.env['kill4city.training'].search([('training_in_process','=',True),('player.id','=',self.id)])
+        self.current_training = all_trainings
+
 
     
 
@@ -251,6 +259,22 @@ class weapon(models.Model):
     # photo = fields.Image(max_width=100, max_height=100)
     use_by = fields.One2many("res.partner","weapon")
     is_weapon = fields.Boolean(default=True)
+
+    def _get_player(self):
+        player = self.env.context.get('player_context')
+        print("Platter id==" ,player)
+        return player
+
+    def selct_weapon(self):
+        for w in self:
+            all_players = self.env['res.partner'].search([('is_plater','=',True)])
+            for player in all_players:
+                if player.id == self.env.context.get('player_context'):
+                    player.weapon = w
+
+    def buy_weapon(self):
+        print("new buy")
+
 
 class conquer(models.Model):
     _name = 'kill4city.conquer'
@@ -394,11 +418,19 @@ class conquer(models.Model):
                 c.player_life = c.player.life 
                 # c.in_battle = False
 
+
+class buy_weapon_wizard(models.TransientModel):
+    _name = 'kill4city.buy_weapon_wizard'
+    _description = 'Wizard of buy weapon'
+
+    # player = 
+
+
 class training_wizard(models.TransientModel):
     _name = 'kill4city.training_wizard'
     _description = 'Wizard of training'
 
-    state = fields.Selection([('select_player_2','Player'),('select_training','Training'),('select_info','Info')], default = 'select_zone')
+    state = fields.Selection([('select_player','Player'),('select_training','Training'),('select_info','Info')], default = 'select_player')
 
 
     def _get_player(self):
@@ -407,15 +439,50 @@ class training_wizard(models.TransientModel):
         return player
 
     player = fields.Many2one("res.partner", ondelete='cascade',default = _get_player)
-    training_type = fields.Selection([('brain', 'Brain'),('power','Power')] , required = True)
+    training_type = fields.Selection([('brain', 'Brain'),('power','Power')], default='brain')
 
 
     # end_time = fields.Datetime(readonly=True)
 
+    def next(self):
+        state = self.state
+        if state == 'select_player':
+            self.state = 'select_training'
+        elif state == 'select_training':
+            self.state = 'select_info'
+
+        return {
+            'name': 'Kill4city training wizard action',
+            'type': 'ir.actions.act_window',
+            'res_model': self._name,
+            'res_id': self.id,
+            'view_mode': 'form',
+            'target': 'new',
+            'context': self._context
+        }
+
+    def previous(self):
+        state = self.state
+        if state == 'select_info':
+            self.state = 'select_training'
+        elif state == 'select_training':
+            self.state = 'select_player'
+
+
+        return {
+        'name': 'Negocity travel wizard action',
+        'type': 'ir.actions.act_window',
+        'res_model': self._name,
+        'res_id': self.id,
+        'view_mode': 'form',
+        'target': 'new',
+        'context': self._context
+        }
+
     def done(self):
         conquer = self.env['kill4city.training'].create({
-            'training_type': self.training_type.id,
-            'player': self.player.id
+            'player': self.player.id,
+            'training_type': self.training_type #Aqui error
         })
         return {
             'name': 'kill4city conquer',

@@ -31,7 +31,6 @@
                             <field name="weapon" domain="[('is_weapon', '=', True)]" />
                             <field name="in_city" />
                             <field name="occupied" />
-                            <!-- <field name="is_plater" /> -->
                         </group>
                         <notebook>
                             <page string="City">
@@ -39,25 +38,91 @@
                                     <field name="in_city" />
                                 </group>
                             </page>
-                            <page string="Zones" >
+                            <page string="Zones">
                                 <group>
-                                    <field name="zone_list" domain="[('status', '=', True)]"/>
+                                    <field name="zone_list" domain="[('status', '=', True)]" />
                                 </group>
                             </page>
-                            <page string="Weapon">
+                            <page string="Weapon" autofocus="autofocus">
+                                <group>
+                                    <button string="Comprar Arma" class="oe_highlight"/>
+                                </group>
                                 <group>
                                     <field name="weapon" domain="[('is_weapon', '=', True)]" />
                                 </group>
-                            </page>
-                            <page string="Training" autofocus="autofocus">
                                 <group>
-                                    <field name="training_type" />
-                                    <!-- <field name="training_start_time" />
-                                    <field name="training_end_time" /> -->
-                                <!-- </group>
-                                <group> -->
-                                    <button name="%(kill4city.training_wizard_action)d" type="action" string="Launch training" class="oe_highlight" 
-                                    context="{'player_context': active_id}" attrs="{'invisible':[('occupied','=',True)]}"/>
+                                    <field name="weapons_list" domain="[('is_weapon', '=', True)]">
+                                        <tree>
+                                            <field name="name" />
+                                            <field name="damage" />
+                                            <button name="selct_weapon" type="object" string="Selct weapon" class="oe_highlight" context="{'player_context': parent.id}" />
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <page string="Training">
+                                <group>
+                                    <field name="current_training">
+                                        <kanban>
+                                            <field name="player" />
+                                            <templates>
+                                                <t t-name="kanban-box">
+                                                    <div class="card-body">
+                                                        <div class="card-info">
+                                                            <a type="open">
+                                                                <p>
+                                                                    <!-- <img src="https://thumbs.gfycat.com/WhiteHonestIrukandjijellyfish-max-1mb.gif" alt="Not found"></img> -->
+                                                                    <img src="/kill4city/static/src/img/training-1.gif" alt="Not found"></img>
+                                                                </p>
+                                                                <table class="conquer-table">
+                                                                    <tr>
+                                                                        <th colspan="2">
+                                                                            <field name="player" />
+                                                                        </th>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="2">
+                                                                            <em>
+                                                                                <strong>
+                                                                                    <field name="training_type" />
+                                                                                </strong>
+                                                                                Training...
+                                                                            </em>
+                                                                            <!-- <field name="level" /> -->
+                                                                            <field name="training_bar" widget="progressbar" />
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            Start:
+                                                                            <strong>
+                                                                                <field name="start_time" />
+                                                                            </strong>
+                                                                        </td>
+                                                                        <td>
+                                                                            End:
+                                                                            <strong>
+                                                                                <field name="end_time" />
+                                                                            </strong>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="2">
+                                                                            <div class="button-container-1">
+                                                                                <span class="mas">Cancel training</span>
+                                                                                <button id='work' type="object" name="cancel_training">Cancel training</button>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </t>
+                                            </templates>
+                                        </kanban>
+                                    </field>
+                                    <button name="%(kill4city.training_wizard_action)d" type="action" string="Launch training" class="oe_highlight" context="{'player_context': active_id}" attrs="{'invisible':[('occupied','=',True)]}" />
                                 </group>
                             </page>
                         </notebook>
@@ -125,7 +190,6 @@
                                             </tr>
                                         </table>
                                     </a>
-
                                 </div>
                             </div>
                         </t>
@@ -150,9 +214,7 @@
             </field>
         </record>
     </data>
-</odoo>
-
-<!-- ___________________________________________ -->
+</odoo> <!-- ___________________________________________ -->
 
 <!-- ##################################################### -->
 

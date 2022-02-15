@@ -8,6 +8,8 @@
                     <field name="name" />
                     <field name="damage" />
                     <field name="use_by" />
+                    
+                    <button name="buy_weapon" type="object" string="Comprar Arma" class="oe_highlight" />
                 </tree>
             </field>
         </record>
