@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from email.policy import default
 from odoo import models, fields, api
 import random
 from datetime import datetime, timedelta
@@ -423,7 +424,16 @@ class buy_weapon_wizard(models.TransientModel):
     _name = 'kill4city.buy_weapon_wizard'
     _description = 'Wizard of buy weapon'
 
-    # player = 
+    def _get_weapon(self):
+        player = self.env.context.get('weapon_context')
+        return player
+
+    player = fields.Many2one("res.partner", ondelete='cascade', required=True)
+    weapon = fields.Many2one("product.product", ondelete='cascade', default=_get_weapon, required=True)
+
+    def buy(self):
+        # # self.player # Aqui
+        print("HOLA", self.player.id)
 
 
 class training_wizard(models.TransientModel):
