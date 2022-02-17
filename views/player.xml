@@ -31,6 +31,7 @@
                             <field name="weapon" domain="[('is_weapon', '=', True)]" />
                             <field name="in_city" />
                             <field name="occupied" />
+                            <field name="coins"/>
                         </group>
                         <notebook>
                             <page string="City">

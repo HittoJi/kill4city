@@ -11,7 +11,7 @@
                             <field name="player" domain="[('occupied', '=', False),('is_plater', '=', True)]" />
                         </group>
                         <footer>
-                            <button name="buy" type="object" string="Buy" class="oe_highlight"/>
+                            <button name="buy" type="object" string="Buy" class="oe_highlight" />
                         </footer>
                     </sheet>
                 </form>
@@ -35,6 +35,7 @@
                     <field name="name" />
                     <field name="damage" />
                     <field name="use_by" />
+                    <field name="list_price" />
                     <button name="%(kill4city.buy_weapon_wizard_action)d" type="action" string="Buy" class="oe_highlight" context="{'weapon_context': active_id}" />
                 </tree>
             </field>
@@ -47,9 +48,11 @@
                 <form>
                     <sheet>
                         <group>
+                            <field name="image_1920" />
                             <field name="name" />
                             <field name="damage" />
-                            <!-- <field name="is_weapon"/> -->
+                            <field name="list_price" />
+                            <!-- <field name="amount_untaxed"/> -->
                         </group>
                     </sheet>
                 </form>
@@ -106,8 +109,7 @@
             </field>
         </record>
     </data>
-</odoo>
-<!-- <notebook position="inside">
+</odoo><!-- <notebook position="inside">
     <page string="Kill4City">
         <group>
             <field name="damage" />

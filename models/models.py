@@ -332,7 +332,15 @@ class conquer(models.Model):
                 # time_end_calculate = math.log(1* (zone_calculate*player_calculate),2)
 
                 return fields.Datetime.to_string(fields.Datetime.from_string(conquer.start_time) + timedelta(hours=time_end_calculate))
-                    
+    
+    @api.model
+    def yield_conts(self):
+        allConquer = self.search([('percentage_conquers','=','100')])
+        for c in allConquer:
+            c.player.coins += c.zone.food
+            print("yield_conts",c.zone.name)
+
+
     def calculate_time_difference_percentage(self):
         allConquer = self.search([])
         for c in allConquer:
@@ -431,9 +439,43 @@ class buy_weapon_wizard(models.TransientModel):
     player = fields.Many2one("res.partner", ondelete='cascade', required=True)
     weapon = fields.Many2one("product.product", ondelete='cascade', default=_get_weapon, required=True)
 
+
     def buy(self):
         # # self.player # Aqui
-        print("HOLA", self.player.id)
+        weapon_exist = False;
+        
+        for buy in self:
+        #     # Check if the player has monny
+            if buy.player.coins < buy.weapon.list_price:
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': 'Information!',
+                        'message': 'The player ('+buy.player.name+') does not have enough money.',
+                        'sticky': False,
+                    }
+                }
+            else:
+                for weapon in buy.player.weapons_list:
+                    if weapon == buy.weapon:
+                        weapon_exist = True
+                if weapon_exist == False:
+                    buy.player.coins -= buy.weapon.list_price
+                    buy.player.weapons_list += buy.weapon
+                    order = self.env['sale.order'].create({
+                            'partner_id': buy.player.id
+                        })
+                    order_line = self.env['sale.order.line'].create({
+                            'order_id': order.id,
+                            'product_id': buy.weapon.id,
+                            'product_uom_qty': buy.weapon.list_price,
+                            'price_tax': 0,
+                            'price_reduce_taxinc': 0,
+                            'price_reduce_taxexcl':0
+                            # 'tax_id': fields.Many2many('account.tax', string='Taxes', domain=['|', ('active', '=', False), ('active', '=', True)])
+                        })
+                    # print("AQUI ==> ",order_line.tax_id)
 
 
 class training_wizard(models.TransientModel):
